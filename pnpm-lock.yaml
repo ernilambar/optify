@@ -15,6 +15,9 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
+      '@wordpress/prettier-config':
+        specifier: ^4.27.0
+        version: 4.27.0(wp-prettier@3.0.3)
       '@wordpress/scripts':
         specifier: ^27.0.0
         version: 27.9.0(@playwright/test@1.54.1)(@types/eslint@9.6.1)(@types/node@24.1.0)(@types/webpack@4.41.40)(babel-plugin-macros@3.1.0)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(type-fest@4.41.0)(typescript@5.8.3)
@@ -30,6 +33,9 @@ importers:
       postcss-preset-env:
         specifier: ^10.2.4
         version: 10.2.4(postcss@8.5.6)
+      prettier:
+        specifier: npm:wp-prettier@^3.0.3
+        version: wp-prettier@3.0.3
 
 packages:
 
@@ -1779,6 +1785,12 @@ packages:
   '@wordpress/prettier-config@3.15.0':
     resolution: {integrity: sha512-exC2rkEioTt//AnzPRyaaFv8FNYIvamPDytNol5bKQ6Qh65QSdZZE9V+GtRCrIPL7/Bq6xba03XuRVxl9TjtJg==}
     engines: {node: '>=14'}
+    peerDependencies:
+      prettier: '>=3'
+
+  '@wordpress/prettier-config@4.27.0':
+    resolution: {integrity: sha512-G9sNZ13tgoCwYxZ49jvWMROcRw4JuQjlcct275CAz5wc+blTyob8YPlWAyAJY1h1Q0Nr8cuclS+kdzwD8HCUkg==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       prettier: '>=3'
 
@@ -8460,6 +8472,10 @@ snapshots:
       postcss: 8.5.6
 
   '@wordpress/prettier-config@3.15.0(wp-prettier@3.0.3)':
+    dependencies:
+      prettier: wp-prettier@3.0.3
+
+  '@wordpress/prettier-config@4.27.0(wp-prettier@3.0.3)':
     dependencies:
       prettier: wp-prettier@3.0.3
 
