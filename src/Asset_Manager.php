@@ -16,23 +16,21 @@ namespace Nilambar\Optify;
 class Asset_Manager {
 
 	/**
-	 * Plugin file path.
+	 * Package directory path.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
-	private static $plugin_file;
+	private static $package_dir_path;
 
 	/**
 	 * Initialize asset manager.
 	 *
 	 * @since 1.0.0
-	 *
-	 * @param string $plugin_file Plugin file path.
 	 */
-	public static function init( $plugin_file ) {
-		self::$plugin_file = $plugin_file;
+	public static function init() {
+		self::$package_dir_path = dirname( __DIR__ );
 	}
 
 	/**
@@ -46,14 +44,17 @@ class Asset_Manager {
 	 * @param array  $localize_data Data to localize.
 	 */
 	public static function enqueue_script( $handle, $asset_path, $script_path, $localize_data = [] ) {
-		$asset_file = plugin_dir_path( self::$plugin_file ) . $asset_path;
+		// Get package directory path and URL from Asset_Loader.
+		$package_paths = Asset_Loader::get_package_paths();
+
+		$asset_file = $package_paths['path'] . '/' . $asset_path;
 
 		if ( file_exists( $asset_file ) ) {
 			$asset = require $asset_file;
 
 			wp_enqueue_script(
 				$handle,
-				plugin_dir_url( self::$plugin_file ) . $script_path,
+				$package_paths['url'] . $script_path,
 				$asset['dependencies'] ?? [],
 				$asset['version'] ?? '1.0.0',
 				true
@@ -139,7 +140,8 @@ class Asset_Manager {
 	 * @return string Asset URL.
 	 */
 	public static function get_asset_url( $path ) {
-		return plugin_dir_url( self::$plugin_file ) . $path;
+		$package_paths = Asset_Loader::get_package_paths();
+		return $package_paths['url'] . $path;
 	}
 
 	/**
@@ -151,6 +153,7 @@ class Asset_Manager {
 	 * @return string Asset path.
 	 */
 	public static function get_asset_path( $path ) {
-		return plugin_dir_path( self::$plugin_file ) . $path;
+		$package_paths = Asset_Loader::get_package_paths();
+		return $package_paths['path'] . '/' . $path;
 	}
 }

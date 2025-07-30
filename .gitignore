@@ -50,3 +50,6 @@ npm-debug.log
 /deploy/
 /node_modules/
 /vendor/
+
+# Ignore RTL CSS files
+assets/*-rtl.css
