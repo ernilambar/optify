@@ -14,6 +14,7 @@ import {
 	ToggleControl,
 	ButtonGroup,
 } from '@wordpress/components';
+import SortableField from './sortable-field';
 
 const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, underCog = false } ) => {
 	const [ fields, setFields ] = useState( [] );
@@ -443,6 +444,16 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 							) ) }
 						</ButtonGroup>
 					</div>
+				);
+			case 'sortable':
+				return (
+					<SortableField
+						label={ label }
+						value={ Array.isArray( value ) ? value : [] }
+						choices={ choices || [] }
+						onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
+						settings={ field.settings || {} }
+					/>
 				);
 			case 'heading':
 				return (

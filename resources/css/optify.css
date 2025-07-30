@@ -269,3 +269,138 @@
 		gap: 10px;
 	}
 }
+
+/* Sortable Field Styles */
+.optify-field-type-sortable {
+	.optify-sortable-container {
+		margin-top: 8px;
+	}
+
+	.optify-sortable-list {
+		background: #fff;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		min-height: 50px;
+		padding: 8px;
+		transition: background-color 0.2s ease;
+
+		&:hover {
+			border-color: #007cba;
+		}
+	}
+
+	.optify-sortable-item {
+		background: #fff;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		margin-bottom: 8px;
+		padding: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		cursor: grab;
+		transition: all 0.2s ease;
+		user-select: none;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		&:hover {
+			border-color: #007cba;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		&.enabled {
+			background: #f0f8ff;
+			border-color: #007cba;
+
+			.optify-sortable-item-label {
+				font-weight: 600;
+				color: #007cba;
+			}
+		}
+
+		&.disabled {
+			background: #f6f7f7;
+			border-color: #ddd;
+
+			.optify-sortable-item-label {
+				color: #666;
+			}
+		}
+
+		&:active {
+			cursor: grabbing;
+		}
+	}
+
+	.optify-sortable-item-content {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	.optify-sortable-item-label {
+		font-size: 14px;
+		color: #1d2327;
+		flex: 1;
+		margin-right: 12px;
+	}
+
+	.optify-sortable-item-controls {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.optify-sortable-toggle {
+		.components-form-toggle {
+			margin: 0;
+		}
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+
+		.components-base-control__label {
+			font-size: 12px;
+			margin-bottom: 0;
+			margin-left: 8px;
+		}
+	}
+
+	.optify-sortable-empty {
+		text-align: center;
+		padding: 20px;
+		color: #666;
+		font-style: italic;
+	}
+
+	/* Drag handle indicator */
+	.optify-sortable-item::before {
+		content: "⋮⋮";
+		color: #999;
+		margin-right: 8px;
+		font-size: 12px;
+		line-height: 1;
+	}
+
+	/* Drag state styles */
+	.optify-sortable-item[data-rbd-draggable-context-id] {
+		&[data-rbd-dragging="true"] {
+			background: #f0f0f0;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+			transform: rotate(2deg);
+		}
+	}
+
+	/* Drop zone styles */
+	.optify-sortable-list[data-rbd-droppable-context-id] {
+		&[data-rbd-dropping="true"] {
+			background: #f9f9f9;
+			border-color: #007cba;
+		}
+	}
+}
