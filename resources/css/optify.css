@@ -12,7 +12,6 @@
 	animation: optify-slide-down 0.3s ease-out;
 }
 
-
 @keyframes optify-slide-down {
 	from {
 		opacity: 0;
@@ -25,22 +24,48 @@
 }
 
 .optify-field {
-	margin-bottom: 15px;
-
-	& label {
-		display: block;
-		margin-bottom: 5px;
-		font-weight: 600;
-	}
+	margin-bottom: 10px;
+	width: 100%;
+	max-width: 600px;
 
 	& input[type="text"],
 	& input[type="email"],
 	& input[type="url"],
+	& input[type="number"],
 	& textarea,
 	& select {
 		width: 100%;
 		max-width: 600px;
+		border-radius: 2px;
+		height: 32px;
 	}
+}
+
+.optify-field-label {
+	display: block;
+	margin-bottom: 8px;
+	font-weight: 600;
+	font-size: 14px;
+	color: #1d2327;
+	text-transform: none;
+	letter-spacing: normal;
+	line-height: 1.4;
+	padding: 0;
+}
+
+/* More specific selectors to override CSS-in-JS styles */
+.optify-field label[class*="css-"],
+.optify-field label[class*="styled-"],
+.optify-options-panel .components-base-control__label[class*="css-"],
+.optify-options-panel .components-base-control__label[class*="styled-"] {
+	font-weight: 600;
+	font-size: 14px;
+	color: #1d2327;
+	text-transform: none;
+	letter-spacing: normal;
+	line-height: 1.4;
+	padding: 0;
+	margin-bottom: 8px;
 }
 
 .optify-error {
@@ -92,6 +117,11 @@
 		&__label {
 			font-weight: 600;
 			margin-bottom: 8px;
+			font-size: 14px;
+			color: #1d2327;
+			text-transform: none;
+			line-height: 1.4;
+			padding: 0;
 		}
 	}
 }
@@ -100,14 +130,14 @@
 .optify-field-type-radio,
 .optify-field-type-multi-check,
 .optify-field-type-buttonset {
-	margin-bottom: 8px;
+	margin-bottom: 12px;
 }
 
 .optify-field-radio-group,
 .optify-field-multi-check-group {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 12px;
 	margin-top: 8px;
 }
 
@@ -116,7 +146,7 @@
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: 16px;
 	margin-top: 8px;
 }
 
@@ -124,7 +154,7 @@
 .optify-field-multi-check-group-tight {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 6px;
 	margin-top: 8px;
 }
 
@@ -132,14 +162,51 @@
 .optify-field-multi-check-option {
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: 12px;
 	cursor: pointer;
 	font-size: 14px;
 	color: #1d2327;
+	padding: 6px 0;
+	line-height: 1.4;
 
 	& input[type="radio"],
 	& input[type="checkbox"] {
 		margin: 0;
+		flex-shrink: 0;
+		width: 16px;
+		height: 16px;
+	}
+}
+
+.optify-field-type-radio {
+	.optify-field-radio-option {
+		display: flex;
+		gap: 5px;
+	}
+}
+
+/* Number field with quick select */
+.optify-field-number {
+	& .optify-quick-select {
+		margin-top: 8px;
+		display: flex;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+
+	& .optify-quick-select-button {
+		padding: 4px 8px;
+		font-size: 12px;
+		border: 1px solid #8c8f94;
+		background: #f6f7f7;
+		border-radius: 3px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+
+		&:hover {
+			background: #e5e5e5;
+			border-color: #007cba;
+		}
 	}
 }
 
@@ -158,6 +225,7 @@
 	&:focus {
 		border-color: #007cba;
 		outline: none;
+		box-shadow: 0 0 0 1px #007cba;
 	}
 
 	&[readonly] {
@@ -188,5 +256,6 @@
 	.optify-field-radio-group-horizontal,
 	.optify-field-multi-check-group-horizontal {
 		flex-direction: column;
+		gap: 10px;
 	}
 }

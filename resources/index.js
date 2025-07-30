@@ -3,38 +3,38 @@ import { __ } from '@wordpress/i18n';
 import OptifyOptionsPanel from './js/options-panel';
 import './css/optify.css';
 
-const OptifyOptionsPanelWrapper = ({ config, restUrl, nonce, panelId, underCog = false }) => {
-	if (!config || !restUrl || !nonce || !panelId) {
+const OptifyOptionsPanelWrapper = ( { config, restUrl, nonce, panelId, underCog = false } ) => {
+	if ( ! config || ! restUrl || ! nonce || ! panelId ) {
 		return (
 			<div className="optify-error">
-				{__('Configuration not found. Please refresh the page.', 'optify')}
+				{ __( 'Configuration not found. Please refresh the page.', 'optify' ) }
 			</div>
 		);
 	}
 
 	return (
 		<OptifyOptionsPanel
-			config={config}
-			restUrl={restUrl}
-			nonce={nonce}
-			panelId={panelId}
-			underCog={underCog}
-			onSave={(values) => {
+			config={ config }
+			restUrl={ restUrl }
+			nonce={ nonce }
+			panelId={ panelId }
+			underCog={ underCog }
+			onSave={ ( values ) => {
 				// Handle save success
-			}}
-			onError={(error) => {
+			} }
+			onError={ ( error ) => {
 				// Handle save error
-			}}
+			} }
 		/>
 	);
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener( 'DOMContentLoaded', () => {
 	const { optifyAdmin } = window;
 
 	console.log( optifyAdmin );
 
-	if (!optifyAdmin || !optifyAdmin.panels) {
+	if ( ! optifyAdmin || ! optifyAdmin.panels ) {
 		return;
 	}
 
@@ -43,39 +43,39 @@ document.addEventListener('DOMContentLoaded', () => {
 	console.log( panels );
 
 	// Use a single selector to get all panel containers
-	const panelContainers = document.querySelectorAll('[id^="optify-"][id$="-panel"]');
+	const panelContainers = document.querySelectorAll( '[id^="optify-"][id$="-panel"]' );
 
 	// Track processed containers to avoid duplicates
 	const processedContainers = new Set();
 
-	panelContainers.forEach((container) => {
+	panelContainers.forEach( ( container ) => {
 		// Skip if already processed
-		if (processedContainers.has(container)) {
+		if ( processedContainers.has( container ) ) {
 			return;
 		}
 
-		const panelId = container.id.replace('optify-', '').replace('-panel', '');
+		const panelId = container.id.replace( 'optify-', '' ).replace( '-panel', '' );
 		const underCog = container.dataset.underCog === 'true';
 
-		console.log( panels[panelId] );
+		console.log( panels[ panelId ] );
 
-		if (panels[panelId]) {
+		if ( panels[ panelId ] ) {
 			try {
 				// Mark container as processed
-				processedContainers.add(container);
+				processedContainers.add( container );
 
-				createRoot(container).render(
+				createRoot( container ).render(
 					<OptifyOptionsPanelWrapper
-						config={panels[panelId]}
-						restUrl={restUrl}
-						nonce={nonce}
-						panelId={panelId}
-						underCog={underCog}
+						config={ panels[ panelId ] }
+						restUrl={ restUrl }
+						nonce={ nonce }
+						panelId={ panelId }
+						underCog={ underCog }
 					/>
 				);
-			} catch (error) {
-				console.error('Error rendering panel:', error);
+			} catch ( error ) {
+				console.error( 'Error rendering panel:', error );
 			}
 		}
-	});
-});
+	} );
+} );
