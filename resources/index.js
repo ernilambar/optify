@@ -1,8 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { __ } from '@wordpress/i18n';
 import OptifyOptionsPanel from './js/options-panel';
-import './css/admin.css';
-import './css/options-panel.css';
+import './css/optify.css';
 
 const OptifyOptionsPanelWrapper = ({ config, restUrl, nonce, panelId, underCog = false }) => {
 	if (!config || !restUrl || !nonce || !panelId) {

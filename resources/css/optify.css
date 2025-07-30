@@ -1,0 +1,11 @@
+div {
+	header {
+		a {
+			border: 1px red solid;
+
+			&:hover {
+				text-decoration: none;
+			}
+		}
+	}
+}

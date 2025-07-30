@@ -40,6 +40,9 @@ alwaysApply: true
   - Composer for dependency management (when building advanced plugins or themes)
   - pnpm used for package manager
 
+  Things to remember
+  - This project used Post CSS. Nested CSS is encouraged but only to two levels.
+
   WordPress Best Practices
   - Use WordPress hooks (actions and filters) instead of modifying core files.
   - Implement proper theme functions using functions.php.
