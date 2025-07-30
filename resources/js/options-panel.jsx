@@ -13,10 +13,19 @@ import {
 	TextareaControl,
 	ToggleControl,
 	ButtonGroup,
+	Modal,
 } from '@wordpress/components';
 import SortableField from './sortable-field';
 
-const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, underCog = false } ) => {
+const OptionsPanel = ( {
+	config,
+	restUrl,
+	nonce,
+	panelId,
+	onSave,
+	onError,
+	display = 'inline',
+} ) => {
 	const [ fields, setFields ] = useState( [] );
 	const [ values, setValues ] = useState( {} );
 	const [ originalValues, setOriginalValues ] = useState( {} );
@@ -24,7 +33,8 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ notice, setNotice ] = useState( null );
 	const [ hasChanges, setHasChanges ] = useState( false );
-	const [ isCogExpanded, setIsCogExpanded ] = useState( ! underCog );
+	const [ isToggleExpanded, setIsToggleExpanded ] = useState( display !== 'toggle' );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const { panelTitle, saveButtonText, savingText, loadingText, messages } = config;
 
@@ -131,11 +141,19 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 
 			onSave?.( savedValues );
 
-			// Auto-close on successful save when underCog is enabled
-			if ( underCog ) {
+			// Auto-close on successful save when using toggle or modal display
+			if ( display === 'toggle' ) {
 				// Small delay to show success message before closing
 				setTimeout( () => {
-					setIsCogExpanded( false );
+					setIsToggleExpanded( false );
+					setNotice( null ); // Clear the notice when closing
+				}, 1000 );
+			}
+
+			if ( display === 'modal' ) {
+				// Small delay to show success message before closing
+				setTimeout( () => {
+					setIsModalOpen( false );
 					setNotice( null ); // Clear the notice when closing
 				}, 1000 );
 			}
@@ -498,24 +516,102 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 		return <div className="optify-loading">{ loadingText }</div>;
 	}
 
-	// Render cog icon if underCog is true
-	if ( underCog ) {
+	// Render modal button if display is modal
+	if ( display === 'modal' ) {
 		return (
-			<div className="optify-options-panel optify-options-panel--under-cog">
+			<div className="optify-options-panel optify-options-panel--modal">
+				{ /* Modal Button */ }
+				<div className="optify-modal-container">
+					<Button
+						variant="secondary"
+						className="optify-modal-button"
+						onClick={ () => setIsModalOpen( true ) }
+						aria-label={ __( 'Open settings', 'optify' ) }
+					>
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							className="optify-modal-icon"
+						>
+							<path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5A3.5 3.5 0 0 1 15.5 12A3.5 3.5 0 0 1 12 15.5M19.43 12.97C19.47 12.65 19.5 12.33 19.5 12C19.5 11.67 19.47 11.34 19.43 11L21.54 9.37C21.73 9.22 21.78 8.95 21.66 8.73L19.66 5.27C19.54 5.05 19.27 4.96 19.05 5.05L16.56 6.05C16.04 5.66 15.5 5.32 14.87 5.07L14.5 2.42C14.46 2.18 14.25 2 14 2H10C9.75 2 9.54 2.18 9.5 2.42L9.13 5.07C8.5 5.32 7.96 5.66 7.44 6.05L4.95 5.05C4.73 4.96 4.46 5.05 4.34 5.27L2.34 8.73C2.22 8.95 2.27 9.22 2.46 9.37L4.57 11C4.53 11.34 4.5 11.67 4.5 12C4.5 12.33 4.53 12.65 4.57 12.97L2.46 14.63C2.27 14.78 2.22 15.05 2.34 15.27L4.34 18.73C4.46 18.95 4.73 19.04 4.95 18.95L7.44 17.95C7.96 18.34 8.5 18.68 9.13 18.93L9.5 21.58C9.54 21.82 9.75 22 10 22H14C14.25 22 14.46 21.82 14.5 21.58L14.87 18.93C15.5 18.68 16.04 18.34 16.56 17.95L19.05 18.95C19.27 19.04 19.54 18.95 19.66 18.73L21.66 15.27C21.78 15.05 21.73 14.78 21.54 14.63L19.43 12.97Z" />
+						</svg>
+					</Button>
+				</div>
+
+				{ /* Modal Content */ }
+				{ isModalOpen && (
+					<Modal
+						title={ panelTitle }
+						onRequestClose={ () => setIsModalOpen( false ) }
+						className="optify-modal"
+					>
+						{ notice && (
+							<Notice status={ notice.type } onRemove={ () => setNotice( null ) }>
+								{ notice.message }
+							</Notice>
+						) }
+
+						<Panel>
+							<PanelBody>
+								{ fields.map( ( field ) => (
+									<PanelRow key={ field.name }>
+										{ renderField(
+											field,
+											values[ field.name ] !== undefined
+												? values[ field.name ]
+												: field.default,
+											handleFieldChange
+										) }
+									</PanelRow>
+								) ) }
+							</PanelBody>
+						</Panel>
+
+						<div className="optify-actions">
+							<Button
+								variant="primary"
+								isBusy={ isSaving }
+								onClick={ handleSave }
+								disabled={ isSaving || ! hasChanges }
+							>
+								{ isSaving ? savingText : saveButtonText }
+							</Button>
+
+							{ /* Manual close button */ }
+							<Button
+								variant="secondary"
+								onClick={ () => setIsModalOpen( false ) }
+								disabled={ isSaving }
+							>
+								{ __( 'Close', 'optify' ) }
+							</Button>
+						</div>
+					</Modal>
+				) }
+			</div>
+		);
+	}
+
+	// Render toggle icon if display is toggle
+	if ( display === 'toggle' ) {
+		return (
+			<div className="optify-options-panel optify-options-panel--toggle">
 				{ notice && (
 					<Notice status={ notice.type } onRemove={ () => setNotice( null ) }>
 						{ notice.message }
 					</Notice>
 				) }
 
-				{ /* Cog Icon */ }
-				<div className="optify-cog-container">
+				{ /* Toggle Icon */ }
+				<div className="optify-toggle-container">
 					<Button
 						variant="secondary"
-						className="optify-cog-button"
-						onClick={ () => setIsCogExpanded( ! isCogExpanded ) }
+						className="optify-toggle-button"
+						onClick={ () => setIsToggleExpanded( ! isToggleExpanded ) }
 						aria-label={
-							isCogExpanded
+							isToggleExpanded
 								? __( 'Hide settings', 'optify' )
 								: __( 'Show settings', 'optify' )
 						}
@@ -525,8 +621,8 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 							height="16"
 							viewBox="0 0 24 24"
 							fill="currentColor"
-							className={ `optify-cog-icon ${
-								isCogExpanded ? 'optify-cog-icon--expanded' : ''
+							className={ `optify-toggle-icon ${
+								isToggleExpanded ? 'optify-toggle-icon--expanded' : ''
 							}` }
 						>
 							<path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5A3.5 3.5 0 0 1 15.5 12A3.5 3.5 0 0 1 12 15.5M19.43 12.97C19.47 12.65 19.5 12.33 19.5 12C19.5 11.67 19.47 11.34 19.43 11L21.54 9.37C21.73 9.22 21.78 8.95 21.66 8.73L19.66 5.27C19.54 5.05 19.27 4.96 19.05 5.05L16.56 6.05C16.04 5.66 15.5 5.32 14.87 5.07L14.5 2.42C14.46 2.18 14.25 2 14 2H10C9.75 2 9.54 2.18 9.5 2.42L9.13 5.07C8.5 5.32 7.96 5.66 7.44 6.05L4.95 5.05C4.73 4.96 4.46 5.05 4.34 5.27L2.34 8.73C2.22 8.95 2.27 9.22 2.46 9.37L4.57 11C4.53 11.34 4.5 11.67 4.5 12C4.5 12.33 4.53 12.65 4.57 12.97L2.46 14.63C2.27 14.78 2.22 15.05 2.34 15.27L4.34 18.73C4.46 18.95 4.73 19.04 4.95 18.95L7.44 17.95C7.96 18.34 8.5 18.68 9.13 18.93L9.5 21.58C9.54 21.82 9.75 22 10 22H14C14.25 22 14.46 21.82 14.5 21.58L14.87 18.93C15.5 18.68 16.04 18.34 16.56 17.95L19.05 18.95C19.27 19.04 19.54 18.95 19.66 18.73L21.66 15.27C21.78 15.05 21.73 14.78 21.54 14.63L19.43 12.97Z" />
@@ -535,7 +631,7 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 				</div>
 
 				{ /* Expandable Content */ }
-				{ isCogExpanded && (
+				{ isToggleExpanded && (
 					<div className="optify-panel-content">
 						<Panel>
 							<PanelBody>
@@ -565,7 +661,7 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 							{ /* Manual close button */ }
 							<Button
 								variant="secondary"
-								onClick={ () => setIsCogExpanded( false ) }
+								onClick={ () => setIsToggleExpanded( false ) }
 								disabled={ isSaving }
 							>
 								{ __( 'Close', 'optify' ) }
@@ -577,7 +673,7 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 		);
 	}
 
-	// Default render (when underCog is false or not passed)
+	// Default render (when display is 'inline')
 	return (
 		<div className="optify-options-panel">
 			{ notice && (

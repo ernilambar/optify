@@ -125,18 +125,19 @@ class Panel_Manager {
 			'show_title'      => true,
 			'location'        => 'standalone',
 			'wrapper'         => true,
+			'display'         => 'inline',
 		];
 
 		$args = wp_parse_args( $args, $defaults );
 
 		if ( $args['wrapper'] ) {
-			$under_cog = isset( $args['under_cog'] ) ? $args['under_cog'] : false;
+			$display = $args['display'];
 			printf(
-				'<div id="optify-%s-panel" class="%s optify-panel-%s" data-under-cog="%s">',
+				'<div id="optify-%s-panel" class="%s optify-panel-%s" data-display="%s">',
 				esc_attr( $panel_id ),
 				esc_attr( $args['container_class'] ),
 				esc_attr( $panel_id ),
-				esc_attr( $under_cog ? 'true' : 'false' )
+				esc_attr( $display )
 			);
 		}
 

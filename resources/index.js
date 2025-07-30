@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import OptifyOptionsPanel from './js/options-panel';
 import './css/optify.css';
 
-const OptifyOptionsPanelWrapper = ( { config, restUrl, nonce, panelId, underCog = false } ) => {
+const OptifyOptionsPanelWrapper = ( { config, restUrl, nonce, panelId, display = 'inline' } ) => {
 	if ( ! config || ! restUrl || ! nonce || ! panelId ) {
 		return (
 			<div className="optify-error">
@@ -18,7 +18,7 @@ const OptifyOptionsPanelWrapper = ( { config, restUrl, nonce, panelId, underCog 
 			restUrl={ restUrl }
 			nonce={ nonce }
 			panelId={ panelId }
-			underCog={ underCog }
+			display={ display }
 			onSave={ ( values ) => {
 				// Handle save success
 			} }
@@ -53,7 +53,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		}
 
 		const panelId = container.id.replace( 'optify-', '' ).replace( '-panel', '' );
-		const underCog = container.dataset.underCog === 'true';
+		const display = container.dataset.display || 'inline';
 
 		console.log( panels[ panelId ] );
 
@@ -68,7 +68,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 						restUrl={ restUrl }
 						nonce={ nonce }
 						panelId={ panelId }
-						underCog={ underCog }
+						display={ display }
 					/>
 				);
 			} catch ( error ) {
