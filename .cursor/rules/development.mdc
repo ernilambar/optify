@@ -41,7 +41,7 @@ alwaysApply: true
   - pnpm used for package manager
 
   Things to remember
-  - This project used Post CSS. Nested CSS is encouraged but only to two levels.
+  - This project uses Post CSS. Nested CSS is encouraged but only to two levels.
 
   WordPress Best Practices
   - Use WordPress hooks (actions and filters) instead of modifying core files.

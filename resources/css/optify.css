@@ -1,11 +1,192 @@
-div {
-	header {
-		a {
-			border: 1px red solid;
+.optify-panel {
+	margin: 0;
 
-			&:hover {
-				text-decoration: none;
-			}
+	& h2 {
+		margin-top: 0;
+		color: #23282d;
+	}
+}
+
+.optify-panel-content {
+	margin-top: 15px;
+	animation: optify-slide-down 0.3s ease-out;
+}
+
+
+@keyframes optify-slide-down {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.optify-field {
+	margin-bottom: 15px;
+
+	& label {
+		display: block;
+		margin-bottom: 5px;
+		font-weight: 600;
+	}
+
+	& input[type="text"],
+	& input[type="email"],
+	& input[type="url"],
+	& textarea,
+	& select {
+		width: 100%;
+		max-width: 600px;
+	}
+}
+
+.optify-error {
+	color: #dc3232;
+	padding: 10px;
+	margin: 10px 0;
+}
+
+.optify-success {
+	color: #46b450;
+	padding: 10px;
+	margin: 10px 0;
+}
+
+.optify-save-button {
+	margin-top: 20px;
+}
+
+.optify-notice {
+	margin: 10px 0;
+}
+
+/* WordPress Components Integration */
+.optify-options-panel {
+	& .components-panel {
+		margin-bottom: 20px;
+	}
+
+	& .components-panel__body {
+		padding: 20px;
+	}
+
+	& .components-panel__row {
+		margin-bottom: 15px;
+	}
+
+	& .components-base-control {
+		margin-bottom: 16px;
+		width: 100%;
+
+		&:last-child {
+			margin-bottom: 0;
 		}
+
+		&__field {
+			width: 100%;
+		}
+
+		&__label {
+			font-weight: 600;
+			margin-bottom: 8px;
+		}
+	}
+}
+
+/* Field Types */
+.optify-field-type-radio,
+.optify-field-type-multi-check,
+.optify-field-type-buttonset {
+	margin-bottom: 8px;
+}
+
+.optify-field-radio-group,
+.optify-field-multi-check-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.optify-field-radio-group-horizontal,
+.optify-field-multi-check-group-horizontal {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.optify-field-radio-group-tight,
+.optify-field-multi-check-group-tight {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-top: 8px;
+}
+
+.optify-field-radio-option,
+.optify-field-multi-check-option {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	cursor: pointer;
+	font-size: 14px;
+	color: #1d2327;
+
+	& input[type="radio"],
+	& input[type="checkbox"] {
+		margin: 0;
+	}
+}
+
+/* Text Inputs */
+.optify-field-input,
+.optify-field-textarea {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	font-size: 14px;
+	line-height: 1.4;
+	background-color: #fff;
+	color: #1d2327;
+
+	&:focus {
+		border-color: #007cba;
+		outline: none;
+	}
+
+	&[readonly] {
+		background-color: #f6f7f7;
+	}
+}
+
+.optify-field-textarea {
+	min-height: 100px;
+	resize: vertical;
+}
+
+.optify-actions {
+	& .components-button {
+		margin-right: 10px;
+	}
+}
+
+/* Loading State */
+.optify-loading {
+	text-align: center;
+	padding: 20px;
+	color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.optify-field-radio-group-horizontal,
+	.optify-field-multi-check-group-horizontal {
+		flex-direction: column;
 	}
 }
