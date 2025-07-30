@@ -9,6 +9,8 @@ A flexible WordPress panel system for React-based options that can be used in an
 - **REST API**: Automatic REST endpoints for panel data
 - **Asset Management**: Automatic CSS/JS enqueuing
 - **Flexible Rendering**: Render panels in admin pages, dashboard widgets, metaboxes, etc.
+- **Simplified API**: Single `Panel_Manager::render_panel()` method for all rendering contexts
+- **Unique CSS Classes**: Each panel gets a unique CSS class for easy styling (`optify-panel-{panel_id}`)
 
 ## Complete Example
 
@@ -65,7 +67,11 @@ function my_plugin_settings_page() {
         <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
         <?php
         // Render the panel.
-        \Nilambar\Optify\Panel_Renderer::render_admin_page( 'main' );
+        \Nilambar\Optify\Panel_Manager::render_panel( 'main', [
+            'container_class' => 'optify-panel-admin',
+            'show_title'      => true,
+            'location'        => 'admin_page',
+        ] );
         ?>
     </div>
     <?php
@@ -103,16 +109,13 @@ class MyMainPanel extends \Nilambar\Optify\Abstract_Panel {
 ### 5. Render Panels
 
 ```php
-use Nilambar\Optify\Panel_Renderer;
+use Nilambar\Optify\Panel_Manager;
 
 // Render in admin page
-Panel_Renderer::render_admin_page( 'main' );
-
-// Render in dashboard widget
-Panel_Renderer::render_dashboard_widget( 'main' );
-
-// Render in metabox
-Panel_Renderer::render_metabox( 'main' );
+Panel_Manager::render_panel( 'main', [
+    'container_class' => 'optify-panel-admin',
+    'show_title'      => false,
+] );
 ```
 
 ## REST API Endpoints
@@ -142,27 +145,6 @@ Supported field types:
 - `heading` - Display-only heading text
 - `message` - Message with status (info, success, warning, error, description)
 
-## Custom Panel Configuration
-
-```php
-// Set custom panel configuration callback
-Optify::set_panel_config_callback( function() {
-    $panel_configs = [];
-    $all_panels = Optify::get_all_panels();
-
-    foreach ( $all_panels as $panel_id => $panel ) {
-        // Admin pages: all panels
-        $panel_configs['admin_page'][ $panel_id ] = $panel->get_react_config();
-
-        // Dashboard widgets: only specific panels
-        if ( in_array( $panel_id, [ 'main', 'quick' ] ) ) {
-            $panel_configs['dashboard_widget'][ $panel_id ] = $panel->get_react_config();
-        }
-    }
-
-    return $panel_configs;
-} );
-```
 
 ## License
 

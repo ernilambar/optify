@@ -132,10 +132,9 @@ class Panel_Manager {
 		if ( $args['wrapper'] ) {
 			$under_cog = isset( $args['under_cog'] ) ? $args['under_cog'] : false;
 			printf(
-				'<div id="optify-%s-panel" class="%s" data-location="%s" data-panel="%s" data-under-cog="%s">',
+				'<div id="optify-%s-panel" class="%s optify-panel-%s" data-under-cog="%s">',
 				esc_attr( $panel_id ),
 				esc_attr( $args['container_class'] ),
-				esc_attr( $args['location'] ),
 				esc_attr( $panel_id ),
 				esc_attr( $under_cog ? 'true' : 'false' )
 			);
