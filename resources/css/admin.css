@@ -1,0 +1,184 @@
+/* Optify Admin Styles */
+
+.optify-panel {
+	margin: 20px 0;
+	padding: 20px;
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+}
+
+.optify-panel h2 {
+	margin-top: 0;
+	color: #23282d;
+}
+
+.optify-panel-content {
+	margin-top: 15px;
+}
+
+.optify-error {
+	color: #dc3232;
+	padding: 10px;
+	background: #fff;
+	border-left: 4px solid #dc3232;
+	margin: 10px 0;
+}
+
+.optify-success {
+	color: #46b450;
+	padding: 10px;
+	background: #fff;
+	border-left: 4px solid #46b450;
+	margin: 10px 0;
+}
+
+.optify-field {
+	margin-bottom: 15px;
+}
+
+.optify-field label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: 600;
+}
+
+.optify-field input[type="text"],
+.optify-field input[type="email"],
+.optify-field input[type="url"],
+.optify-field textarea,
+.optify-field select {
+	width: 100%;
+	max-width: 600px;
+}
+
+.optify-field .components-base-control__field {
+	margin-bottom: 0;
+}
+
+.optify-save-button {
+	margin-top: 20px;
+}
+
+.optify-notice {
+	margin: 10px 0;
+}
+
+/* WordPress Components Integration */
+.optify-options-panel {
+	padding: 20px;
+}
+
+.optify-options-panel .components-panel {
+	margin-bottom: 20px;
+}
+
+.optify-options-panel .components-panel__body {
+	padding: 20px;
+}
+
+.optify-options-panel .components-panel__row {
+	margin-bottom: 15px;
+}
+
+.optify-options-panel .components-base-control {
+	margin-bottom: 0;
+	width: 100%;
+}
+
+.optify-options-panel .components-base-control__field {
+	width: 100%;
+}
+
+.optify-options-panel .components-base-control__label {
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+/* Proper spacing for form controls */
+.optify-options-panel .components-base-control {
+	margin-bottom: 16px;
+}
+
+.optify-options-panel .components-base-control:last-child {
+	margin-bottom: 0;
+}
+
+/* Specific spacing for different control types */
+.optify-options-panel .components-checkbox-control {
+	margin-bottom: 16px;
+}
+
+.optify-options-panel .components-toggle-control {
+	margin-bottom: 16px;
+}
+
+.optify-options-panel .components-textarea-control {
+	margin-bottom: 16px;
+}
+
+.optify-options-panel .components-radio-control {
+	margin-bottom: 16px;
+}
+
+.optify-options-panel .components-select-control {
+	margin-bottom: 16px;
+}
+
+.optify-options-panel .components-text-control {
+	margin-bottom: 16px;
+}
+
+/* Experimental toggle group control spacing */
+.optify-options-panel .components-toggle-group-control {
+	margin-bottom: 16px;
+}
+
+/* Multi-check container spacing */
+.optify-options-panel .multi-check-container {
+	margin-bottom: 16px;
+}
+
+.optify-options-panel .multi-check-container .components-checkbox-control {
+	margin-bottom: 8px;
+}
+
+.optify-options-panel .multi-check-container .components-checkbox-control:last-child {
+	margin-bottom: 0;
+}
+
+/* More specific selectors for text controls */
+.optify-options-panel .components-text-control {
+	width: 100%;
+}
+
+.optify-options-panel .components-text-control .components-base-control__field {
+	width: 100%;
+}
+
+.optify-options-panel .components-text-control__input {
+	width: 100%;
+	max-width: 600px;
+	min-width: 400px;
+}
+
+/* More specific selectors for textarea controls */
+.optify-options-panel .components-textarea-control {
+	width: 100%;
+}
+
+.optify-options-panel .components-textarea-control .components-base-control__field {
+	width: 100%;
+}
+
+.optify-options-panel .components-textarea-control__textarea {
+	width: 100%;
+	max-width: 600px;
+	min-width: 400px;
+	min-height: 100px;
+}
+
+.optify-options-panel .components-select-control__input {
+	width: 100%;
+	max-width: 400px;
+}

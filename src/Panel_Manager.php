@@ -1,0 +1,171 @@
+<?php
+/**
+ * Panel Manager Class
+ *
+ * @package Optify
+ * @since 1.0.0
+ */
+
+namespace Nilambar\Optify;
+
+/**
+ * Panel Manager class for handling panels independently of their location.
+ *
+ * @since 1.0.0
+ */
+class Panel_Manager {
+
+	/**
+	 * Registered panels.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array
+	 */
+	private static $panels = [];
+
+	/**
+	 * Panel instances cache.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array
+	 */
+	private static $instances = [];
+
+	/**
+	 * Register a panel.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $panel_id Panel identifier.
+	 * @param string $panel_class Panel class name.
+	 * @param array  $args Panel arguments.
+	 */
+	public static function register_panel( $panel_id, $panel_class, $args = [] ) {
+		self::$panels[ $panel_id ] = [
+			'class' => $panel_class,
+			'args'  => $args,
+		];
+	}
+
+	/**
+	 * Get a panel instance.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $panel_id Panel identifier.
+	 * @return Abstract_Panel|null Panel instance or null if not found.
+	 */
+	public static function get_panel( $panel_id ) {
+		if ( ! isset( self::$panels[ $panel_id ] ) ) {
+			return null;
+		}
+
+		if ( ! isset( self::$instances[ $panel_id ] ) ) {
+			$panel_config = self::$panels[ $panel_id ];
+			$panel_class  = $panel_config['class'];
+			$args         = $panel_config['args'];
+
+			if ( class_exists( $panel_class ) ) {
+				self::$instances[ $panel_id ] = new $panel_class( ...$args );
+			} else {
+				return null;
+			}
+		}
+
+		return self::$instances[ $panel_id ];
+	}
+
+	/**
+	 * Get all registered panel IDs.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Array of panel IDs.
+	 */
+	public static function get_panel_ids() {
+		return array_keys( self::$panels );
+	}
+
+	/**
+	 * Get all registered panels.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Array of panel instances.
+	 */
+	public static function get_all_panels() {
+		$panels = [];
+		foreach ( self::get_panel_ids() as $panel_id ) {
+			$panel = self::get_panel( $panel_id );
+			if ( $panel ) {
+				$panels[ $panel_id ] = $panel;
+			}
+		}
+		return $panels;
+	}
+
+	/**
+	 * Render a panel.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $panel_id Panel identifier.
+	 * @param array  $args Render arguments.
+	 */
+	public static function render_panel( $panel_id, $args = [] ) {
+		$panel = self::get_panel( $panel_id );
+		if ( ! $panel ) {
+			return;
+		}
+
+		$defaults = [
+			'container_class' => 'optify-panel',
+			'show_title'      => true,
+			'location'        => 'standalone',
+			'wrapper'         => true,
+		];
+
+		$args = wp_parse_args( $args, $defaults );
+
+		if ( $args['wrapper'] ) {
+			$under_cog = isset( $args['under_cog'] ) ? $args['under_cog'] : false;
+			printf(
+				'<div id="optify-%s-panel" class="%s" data-location="%s" data-panel="%s" data-under-cog="%s">',
+				esc_attr( $panel_id ),
+				esc_attr( $args['container_class'] ),
+				esc_attr( $args['location'] ),
+				esc_attr( $panel_id ),
+				esc_attr( $under_cog ? 'true' : 'false' )
+			);
+		}
+
+		if ( $args['show_title'] ) {
+			printf(
+				'<h2>%s</h2>',
+				esc_html( $panel->get_panel_title() )
+			);
+		}
+
+		echo '<div class="optify-panel-content">';
+		echo '<p>' . esc_html__( 'Loading panel...', 'groundify' ) . '</p>';
+		echo '</div>';
+
+		if ( $args['wrapper'] ) {
+			echo '</div>';
+		}
+	}
+
+	/**
+	 * Check if a panel exists.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $panel_id Panel identifier.
+	 * @return bool True if panel exists.
+	 */
+	public static function panel_exists( $panel_id ) {
+		return isset( self::$panels[ $panel_id ] );
+	}
+}
