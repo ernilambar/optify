@@ -8,38 +8,73 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 	const [ pendingUpdate, setPendingUpdate ] = useState( null );
 	const lastValueRef = useRef( value );
 
+	// Extract settings with defaults (handle both snake_case and camelCase)
+	const showToggles =
+		settings.show_toggles !== undefined
+			? settings.show_toggles
+			: settings.showToggles !== undefined
+			? settings.showToggles
+			: true;
+
 	// Initialize items from choices and current value
 	useEffect( () => {
 		// Create items with enabled state
 		const itemsWithState = choices.map( ( choice ) => ( {
 			id: choice.value,
 			label: choice.label,
-			enabled: Array.isArray( value ) ? value.includes( choice.value ) : false,
+			enabled: showToggles
+				? Array.isArray( value )
+					? value.includes( choice.value )
+					: false
+				: true, // All items enabled when toggles are disabled
 		} ) );
 
 		// Reorder items based on saved value order
 		const reorderedItems = [];
 
-		// First, add enabled items in the order they appear in the saved value
-		if ( Array.isArray( value ) ) {
-			value.forEach( ( savedValue ) => {
-				const item = itemsWithState.find( ( item ) => item.id === savedValue );
-				if ( item ) {
+		if ( showToggles ) {
+			// With toggles: First, add enabled items in the order they appear in the saved value
+			if ( Array.isArray( value ) ) {
+				value.forEach( ( savedValue ) => {
+					const item = itemsWithState.find( ( item ) => item.id === savedValue );
+					if ( item ) {
+						reorderedItems.push( item );
+					}
+				} );
+			}
+
+			// Then, add disabled items that weren't in the saved value
+			itemsWithState.forEach( ( item ) => {
+				if ( ! item.enabled ) {
 					reorderedItems.push( item );
 				}
 			} );
-		}
+		} else {
+			// Without toggles: Use saved order or default to choice order
+			if ( Array.isArray( value ) && value.length > 0 ) {
+				// Use saved order
+				value.forEach( ( savedValue ) => {
+					const item = itemsWithState.find( ( item ) => item.id === savedValue );
+					if ( item ) {
+						reorderedItems.push( item );
+					}
+				} );
 
-		// Then, add disabled items that weren't in the saved value
-		itemsWithState.forEach( ( item ) => {
-			if ( ! item.enabled ) {
-				reorderedItems.push( item );
+				// Add any remaining items that weren't in the saved value
+				itemsWithState.forEach( ( item ) => {
+					if ( ! value.includes( item.id ) ) {
+						reorderedItems.push( item );
+					}
+				} );
+			} else {
+				// No saved values, use original choice order
+				reorderedItems.push( ...itemsWithState );
 			}
-		} );
+		}
 
 		setItems( reorderedItems );
 		lastValueRef.current = value;
-	}, [ choices, value ] );
+	}, [ choices, value, showToggles ] );
 
 	// Sync items when value prop changes (e.g., from parent component)
 	useEffect( () => {
@@ -81,21 +116,29 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 	// Handle pending updates after render
 	useEffect( () => {
 		if ( pendingUpdate ) {
-			const enabledValues = pendingUpdate
-				.filter( ( item ) => item.enabled )
-				.map( ( item ) => item.id );
+			let valuesToSend;
+
+			if ( showToggles ) {
+				// With toggles: Send only enabled items
+				valuesToSend = pendingUpdate
+					.filter( ( item ) => item.enabled )
+					.map( ( item ) => item.id );
+			} else {
+				// Without toggles: Send all items in current order
+				valuesToSend = pendingUpdate.map( ( item ) => item.id );
+			}
 
 			// Only call onChange if the values have actually changed
 			const hasChanged =
-				JSON.stringify( enabledValues ) !== JSON.stringify( lastValueRef.current );
+				JSON.stringify( valuesToSend ) !== JSON.stringify( lastValueRef.current );
 
 			if ( hasChanged ) {
-				onChange( enabledValues );
-				lastValueRef.current = enabledValues;
+				onChange( valuesToSend );
+				lastValueRef.current = valuesToSend;
 			}
 			setPendingUpdate( null );
 		}
-	}, [ pendingUpdate, onChange ] );
+	}, [ pendingUpdate, onChange, showToggles ] );
 
 	// Helper function to update parent with current enabled values
 	const updateParentValue = useCallback( ( newItems ) => {
@@ -182,16 +225,18 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 													<span className="optify-sortable-item-label">
 														{ item.label }
 													</span>
-													<div className="optify-sortable-item-controls">
-														<ToggleControl
-															checked={ item.enabled }
-															onChange={ () =>
-																toggleItemEnabled( item.id )
-															}
-															label={ __( 'Enable', 'optify' ) }
-															className="optify-sortable-toggle"
-														/>
-													</div>
+													{ showToggles && (
+														<div className="optify-sortable-item-controls">
+															<ToggleControl
+																checked={ item.enabled }
+																onChange={ () =>
+																	toggleItemEnabled( item.id )
+																}
+																label={ __( 'Enable', 'optify' ) }
+																className="optify-sortable-toggle"
+															/>
+														</div>
+													) }
 												</div>
 											</div>
 										) }
