@@ -1,0 +1,197 @@
+<?php
+/**
+ * Generic Optify Panel System Class
+ *
+ * @package Optify
+ * @since 1.0.0
+ */
+
+namespace Nilambar\Optify;
+
+/**
+ * Generic Optify panel system initialization class.
+ * This class provides generic functionality that any panel system can use.
+ *
+ * @since 1.0.0
+ */
+class Optify {
+
+	/**
+	 * Initialize the panel system.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $namespace REST API namespace.
+	 * @param string $version REST API version.
+	 * @param string $plugin_file Plugin file path.
+	 */
+	public static function init( $namespace, $version, $plugin_file ) {
+		// Initialize REST API routes.
+		self::init_rest_api( $namespace, $version );
+
+		// Initialize asset management.
+		self::init_asset_management( $plugin_file );
+	}
+
+	/**
+	 * Initialize REST API for panel system.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $namespace REST API namespace.
+	 * @param string $version REST API version.
+	 */
+	private static function init_rest_api( $namespace, $version ) {
+		add_action(
+			'rest_api_init',
+			function () use ( $namespace, $version ) {
+				Rest_Handler::register_panel_routes( $namespace, $version, [ Api_Handler::class, 'rest_permission_callback' ] );
+			}
+		);
+	}
+
+	/**
+	 * Initialize asset management for panel system.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $plugin_file Plugin file path.
+	 */
+	private static function init_asset_management( $plugin_file ) {
+		// Initialize asset enqueuer.
+		Asset_Enqueuer::init( $plugin_file );
+
+		// Hook into admin enqueue scripts.
+		add_action( 'admin_enqueue_scripts', [ __CLASS__, 'enqueue_panel_assets' ] );
+	}
+
+	/**
+	 * Enqueue panel assets.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $hook Current admin page hook.
+	 */
+	public static function enqueue_panel_assets( $hook ) {
+		// Generate panel configurations.
+		$panel_configs = self::generate_panel_configs();
+
+		// Load assets for admin pages and dashboard.
+		Asset_Enqueuer::enqueue_panel_assets( $hook, $panel_configs );
+	}
+
+	/**
+	 * Panel configuration callback.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var callable|null
+	 */
+	private static $panel_config_callback = null;
+
+	/**
+	 * Set panel configuration callback.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param callable $callback Callback function to generate panel configurations.
+	 */
+	public static function set_panel_config_callback( $callback ) {
+		self::$panel_config_callback = $callback;
+	}
+
+	/**
+	 * Register a panel.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $panel_id Panel identifier.
+	 * @param string $panel_class Panel class name.
+	 * @param array  $args Panel arguments.
+	 */
+	public static function register_panel( $panel_id, $panel_class, $args = [] ) {
+		Panel_Manager::register_panel( $panel_id, $panel_class, $args );
+	}
+
+	/**
+	 * Get a panel instance.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $panel_id Panel identifier.
+	 * @return Abstract_Panel|null Panel instance or null if not found.
+	 */
+	public static function get_panel( $panel_id ) {
+		return Panel_Manager::get_panel( $panel_id );
+	}
+
+	/**
+	 * Get all registered panel IDs.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Array of panel IDs.
+	 */
+	public static function get_panel_ids() {
+		return Panel_Manager::get_panel_ids();
+	}
+
+	/**
+	 * Get all registered panels.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Array of panel instances.
+	 */
+	public static function get_all_panels() {
+		return Panel_Manager::get_all_panels();
+	}
+
+	/**
+	 * Render a panel.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $panel_id Panel identifier.
+	 * @param array  $args Render arguments.
+	 */
+	public static function render_panel( $panel_id, $args = [] ) {
+		Panel_Manager::render_panel( $panel_id, $args );
+	}
+
+	/**
+	 * Check if a panel exists.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $panel_id Panel identifier.
+	 * @return bool True if panel exists.
+	 */
+	public static function panel_exists( $panel_id ) {
+		return Panel_Manager::panel_exists( $panel_id );
+	}
+
+	/**
+	 * Generate panel configurations by location.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Panel configurations by location.
+	 */
+	private static function generate_panel_configs() {
+		// Use custom callback if provided.
+		if ( self::$panel_config_callback && is_callable( self::$panel_config_callback ) ) {
+			return call_user_func( self::$panel_config_callback );
+		}
+
+		// Default behavior: include all panels for admin pages.
+		$panel_configs = [];
+		$all_panels    = Panel_Manager::get_all_panels();
+
+		foreach ( $all_panels as $panel_id => $panel ) {
+			$panel_configs['admin_page'][ $panel_id ] = $panel->get_react_config();
+		}
+
+		return $panel_configs;
+	}
+}
