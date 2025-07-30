@@ -8,16 +8,75 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 	const [ pendingUpdate, setPendingUpdate ] = useState( null );
 	const lastValueRef = useRef( value );
 
-	// Initialize items from choices and current value - only on first load or when choices change
+	// Initialize items from choices and current value
 	useEffect( () => {
-		const initialItems = choices.map( ( choice ) => ( {
+		// Create items with enabled state
+		const itemsWithState = choices.map( ( choice ) => ( {
 			id: choice.value,
 			label: choice.label,
 			enabled: Array.isArray( value ) ? value.includes( choice.value ) : false,
 		} ) );
-		setItems( initialItems );
+
+		// Reorder items based on saved value order
+		const reorderedItems = [];
+
+		// First, add enabled items in the order they appear in the saved value
+		if ( Array.isArray( value ) ) {
+			value.forEach( ( savedValue ) => {
+				const item = itemsWithState.find( ( item ) => item.id === savedValue );
+				if ( item ) {
+					reorderedItems.push( item );
+				}
+			} );
+		}
+
+		// Then, add disabled items that weren't in the saved value
+		itemsWithState.forEach( ( item ) => {
+			if ( ! item.enabled ) {
+				reorderedItems.push( item );
+			}
+		} );
+
+		setItems( reorderedItems );
 		lastValueRef.current = value;
 	}, [ choices, value ] );
+
+	// Sync items when value prop changes (e.g., from parent component)
+	useEffect( () => {
+		if ( items.length > 0 ) {
+			const valueChanged = JSON.stringify( value ) !== JSON.stringify( lastValueRef.current );
+			if ( valueChanged ) {
+				// Reorder items based on new value order
+				const reorderedItems = [];
+
+				// First, add enabled items in the order they appear in the new value
+				if ( Array.isArray( value ) ) {
+					value.forEach( ( savedValue ) => {
+						const item = items.find( ( item ) => item.id === savedValue );
+						if ( item ) {
+							reorderedItems.push( {
+								...item,
+								enabled: true,
+							} );
+						}
+					} );
+				}
+
+				// Then, add disabled items that weren't in the new value
+				items.forEach( ( item ) => {
+					if ( ! Array.isArray( value ) || ! value.includes( item.id ) ) {
+						reorderedItems.push( {
+							...item,
+							enabled: false,
+						} );
+					}
+				} );
+
+				setItems( reorderedItems );
+				lastValueRef.current = value;
+			}
+		}
+	}, [ value, items.length ] );
 
 	// Handle pending updates after render
 	useEffect( () => {

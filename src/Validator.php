@@ -186,6 +186,32 @@ class Validator {
 					}
 				}
 				break;
+
+			case 'sortable':
+				$choices      = $field['choices'] ?? [];
+				$valid_values = array_column( $choices, 'value' );
+				if ( ! is_array( $value ) ) {
+					return new \WP_Error(
+						'invalid_sortable',
+						sprintf(
+							__( 'Invalid value for field "%s". Sortable field must be an array.', 'optify' ),
+							$field['label']
+						)
+					);
+				}
+				foreach ( $value as $v ) {
+					if ( ! in_array( $v, $valid_values, true ) ) {
+						return new \WP_Error(
+							'invalid_sortable_choice',
+							sprintf(
+								__( 'Invalid value "%s" for field "%s". Value must be one of the available choices.', 'optify' ),
+								$v,
+								$field['label']
+							)
+						);
+					}
+				}
+				break;
 		}
 
 		return true;

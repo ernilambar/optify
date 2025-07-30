@@ -449,7 +449,7 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 				return (
 					<SortableField
 						label={ label }
-						value={ Array.isArray( value ) ? value : [] }
+						value={ Array.isArray( value ) ? value : field.default || [] }
 						choices={ choices || [] }
 						onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
 						settings={ field.settings || {} }

@@ -40,8 +40,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	const { panels, restUrl, nonce } = optifyAdmin;
 
-	console.log( panels );
-
 	// Use a single selector to get all panel containers
 	const panelContainers = document.querySelectorAll( '[id^="optify-"][id$="-panel"]' );
 
