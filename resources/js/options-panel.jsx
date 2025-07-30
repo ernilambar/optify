@@ -246,6 +246,16 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 					...field.settings,
 				};
 
+				// Helper function to compare number values properly
+				const isNumberValueEqual = ( inputValue, choiceValue ) => {
+					// Convert both to numbers for comparison
+					const inputNum = parseFloat( inputValue );
+					const choiceNum = parseFloat( choiceValue );
+
+					// Check if both are valid numbers and equal
+					return ! isNaN( inputNum ) && ! isNaN( choiceNum ) && inputNum === choiceNum;
+				};
+
 				return (
 					<div className="optify-field optify-field-type-number">
 						<label className="optify-field-label">{ label }</label>
@@ -265,7 +275,9 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 										<Button
 											key={ choice.value }
 											variant={
-												value === choice.value ? 'primary' : 'secondary'
+												isNumberValueEqual( value, choice.value )
+													? 'primary'
+													: 'secondary'
 											}
 											size="small"
 											onClick={ () =>
@@ -531,7 +543,9 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 									<PanelRow key={ field.name }>
 										{ renderField(
 											field,
-											values[ field.name ],
+											values[ field.name ] !== undefined
+												? values[ field.name ]
+												: field.default,
 											handleFieldChange
 										) }
 									</PanelRow>
@@ -575,7 +589,13 @@ const OptionsPanel = ( { config, restUrl, nonce, panelId, onSave, onError, under
 				<PanelBody>
 					{ fields.map( ( field ) => (
 						<PanelRow key={ field.name }>
-							{ renderField( field, values[ field.name ], handleFieldChange ) }
+							{ renderField(
+								field,
+								values[ field.name ] !== undefined
+									? values[ field.name ]
+									: field.default,
+								handleFieldChange
+							) }
 						</PanelRow>
 					) ) }
 				</PanelBody>
