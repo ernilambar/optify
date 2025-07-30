@@ -107,10 +107,6 @@ class Asset_Manager {
 	 */
 	public static function enqueue_admin_assets( $hook, $config ) {
 		foreach ( $config as $asset ) {
-			if ( isset( $asset['pages'] ) && ! in_array( $hook, $asset['pages'], true ) ) {
-				continue;
-			}
-
 			if ( isset( $asset['script'] ) ) {
 				self::enqueue_script(
 					$asset['handle'],
@@ -141,7 +137,7 @@ class Asset_Manager {
 	 */
 	public static function get_asset_url( $path ) {
 		$package_paths = Asset_Loader::get_package_paths();
-		return $package_paths['url'] . $path;
+		return $package_paths['url'] . '/' . $path;
 	}
 
 	/**
