@@ -35,6 +35,7 @@ const OptionsPanel = ( {
 	const [ hasChanges, setHasChanges ] = useState( false );
 	const [ isToggleExpanded, setIsToggleExpanded ] = useState( display !== 'toggle' );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const [ isToggleAnimating, setIsToggleAnimating ] = useState( false );
 
 	const { panelTitle, saveButtonText, savingText, loadingText, messages } = config;
 
@@ -145,7 +146,7 @@ const OptionsPanel = ( {
 			if ( display === 'toggle' ) {
 				// Small delay to show success message before closing
 				setTimeout( () => {
-					setIsToggleExpanded( false );
+					handleToggleClick();
 					setNotice( null ); // Clear the notice when closing
 				}, 1000 );
 			}
@@ -167,6 +168,21 @@ const OptionsPanel = ( {
 		} finally {
 			setIsSaving( false );
 		}
+	};
+
+	// Handle toggle animation
+	const handleToggleClick = () => {
+		if ( isToggleAnimating ) {
+			return; // Prevent multiple clicks during animation
+		}
+
+		setIsToggleAnimating( true );
+		setIsToggleExpanded( ! isToggleExpanded );
+
+		// Reset animation state after transition completes
+		setTimeout( () => {
+			setIsToggleAnimating( false );
+		}, 300 ); // Match CSS transition duration
 	};
 
 	// Render field based on type
@@ -609,7 +625,7 @@ const OptionsPanel = ( {
 					<Button
 						variant="secondary"
 						className="optify-toggle-button"
-						onClick={ () => setIsToggleExpanded( ! isToggleExpanded ) }
+						onClick={ handleToggleClick }
 						aria-label={
 							isToggleExpanded
 								? __( 'Hide settings', 'optify' )
@@ -631,44 +647,46 @@ const OptionsPanel = ( {
 				</div>
 
 				{ /* Expandable Content */ }
-				{ isToggleExpanded && (
-					<div className="optify-panel-content">
-						<Panel>
-							<PanelBody>
-								{ fields.map( ( field ) => (
-									<PanelRow key={ field.name }>
-										{ renderField(
-											field,
-											values[ field.name ] !== undefined
-												? values[ field.name ]
-												: field.default,
-											handleFieldChange
-										) }
-									</PanelRow>
-								) ) }
-							</PanelBody>
-						</Panel>
-						<div className="optify-actions">
-							<Button
-								variant="primary"
-								isBusy={ isSaving }
-								onClick={ handleSave }
-								disabled={ isSaving || ! hasChanges }
-							>
-								{ isSaving ? savingText : saveButtonText }
-							</Button>
+				<div
+					className={ `optify-panel-content ${
+						! isToggleExpanded ? 'optify-panel-content--collapsed' : ''
+					}` }
+				>
+					<Panel>
+						<PanelBody>
+							{ fields.map( ( field ) => (
+								<PanelRow key={ field.name }>
+									{ renderField(
+										field,
+										values[ field.name ] !== undefined
+											? values[ field.name ]
+											: field.default,
+										handleFieldChange
+									) }
+								</PanelRow>
+							) ) }
+						</PanelBody>
+					</Panel>
+					<div className="optify-actions">
+						<Button
+							variant="primary"
+							isBusy={ isSaving }
+							onClick={ handleSave }
+							disabled={ isSaving || ! hasChanges }
+						>
+							{ isSaving ? savingText : saveButtonText }
+						</Button>
 
-							{ /* Manual close button */ }
-							<Button
-								variant="secondary"
-								onClick={ () => setIsToggleExpanded( false ) }
-								disabled={ isSaving }
-							>
-								{ __( 'Close', 'optify' ) }
-							</Button>
-						</div>
+						{ /* Manual close button */ }
+						<Button
+							variant="secondary"
+							onClick={ handleToggleClick }
+							disabled={ isSaving }
+						>
+							{ __( 'Close', 'optify' ) }
+						</Button>
 					</div>
-				) }
+				</div>
 			</div>
 		);
 	}

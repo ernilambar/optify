@@ -404,3 +404,67 @@
 		}
 	}
 }
+
+/* Toggle Panel Styles */
+.optify-options-panel--toggle {
+	.optify-toggle-container {
+		margin-bottom: 10px;
+	}
+
+	.optify-toggle-button {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 12px;
+		border: 1px solid #ddd;
+		background: #fff;
+		border-radius: 4px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		font-size: 14px;
+		color: #1d2327;
+
+		&:hover {
+			border-color: #007cba;
+			background: #f6f7f7;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		}
+
+		&:focus {
+			border-color: #007cba;
+			box-shadow: 0 0 0 1px #007cba;
+			outline: none;
+		}
+	}
+
+	.optify-toggle-icon {
+		transition: transform 0.3s ease;
+		transform: rotate(0deg);
+		flex-shrink: 0;
+
+		&.optify-toggle-icon--expanded {
+			transform: rotate(180deg);
+		}
+	}
+
+	/* Smooth slide animation for toggle content */
+	.optify-panel-content {
+		overflow: hidden;
+		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		opacity: 1;
+		max-height: 2000px; /* Large enough to accommodate content */
+		transform: translateY(0);
+		margin-top: 15px;
+	}
+
+	.optify-panel-content--collapsed {
+		opacity: 0;
+		max-height: 0;
+		transform: translateY(-10px);
+		margin-top: 0;
+		margin-bottom: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+		pointer-events: none;
+	}
+}
