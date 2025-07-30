@@ -141,6 +141,7 @@ Supported field types:
 - `checkbox` - Checkbox
 - `toggle` - Toggle switch
 - `multi-check` - Multiple checkboxes
+- `sortable` - Drag and drop sortable list
 - `buttonset` - Button group
 - `heading` - Display-only heading text
 - `message` - Message with status (info, success, warning, error, description)

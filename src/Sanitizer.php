@@ -53,6 +53,9 @@ class Sanitizer {
 			case 'multi-check':
 				return is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : [];
 
+			case 'sortable':
+				return is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : [];
+
 			case 'array':
 				return is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : [];
 
