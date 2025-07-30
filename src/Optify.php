@@ -190,12 +190,12 @@ class Optify {
 		return Panel_Manager::panel_exists( $panel_id );
 	}
 
-	/**
-	 * Generate panel configurations by location.
+		/**
+	 * Generate panel configurations.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array Panel configurations by location.
+	 * @return array Panel configurations.
 	 */
 	private static function generate_panel_configs() {
 		// Use custom callback if provided.
@@ -203,12 +203,12 @@ class Optify {
 			return call_user_func( self::$panel_config_callback );
 		}
 
-		// Default behavior: include all panels for admin pages.
+		// Simple approach: all panels available everywhere.
 		$panel_configs = [];
 		$all_panels    = Panel_Manager::get_all_panels();
 
 		foreach ( $all_panels as $panel_id => $panel ) {
-			$panel_configs['admin_page'][ $panel_id ] = $panel->get_react_config();
+			$panel_configs[ $panel_id ] = $panel->get_react_config();
 		}
 
 		return $panel_configs;

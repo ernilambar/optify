@@ -33,31 +33,41 @@ const OptifyOptionsPanelWrapper = ({ config, restUrl, nonce, panelId, underCog =
 document.addEventListener('DOMContentLoaded', () => {
 	const { optifyAdmin } = window;
 
+	console.log( optifyAdmin );
+
 	if (!optifyAdmin || !optifyAdmin.panels) {
 		return;
 	}
 
 	const { panels, restUrl, nonce } = optifyAdmin;
 
+	console.log( panels );
+
+	// Use a single selector to get all panel containers
 	const panelContainers = document.querySelectorAll('[id^="optify-"][id$="-panel"]');
 
-	// Also look for panels inside dashboard widgets
-	const dashboardWidgets = document.querySelectorAll('[data-location="dashboard_widget"]');
-	const dashboardPanelContainers = document.querySelectorAll('#dashboard-widgets [id^="optify-"][id$="-panel"]');
+	// Track processed containers to avoid duplicates
+	const processedContainers = new Set();
 
-	// Combine all panel containers
-	const allPanelContainers = [...panelContainers, ...dashboardPanelContainers];
+	panelContainers.forEach((container) => {
+		// Skip if already processed
+		if (processedContainers.has(container)) {
+			return;
+		}
 
-	allPanelContainers.forEach((container) => {
 		const panelId = container.id.replace('optify-', '').replace('-panel', '');
-		const location = container.dataset.location;
 		const underCog = container.dataset.underCog === 'true';
 
-		if (location && panels[location] && panels[location][panelId]) {
+		console.log( panels[panelId] );
+
+		if (panels[panelId]) {
 			try {
+				// Mark container as processed
+				processedContainers.add(container);
+
 				createRoot(container).render(
 					<OptifyOptionsPanelWrapper
-						config={panels[location][panelId]}
+						config={panels[panelId]}
 						restUrl={restUrl}
 						nonce={nonce}
 						panelId={panelId}
@@ -65,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					/>
 				);
 			} catch (error) {
-				// Handle rendering error
+				console.error('Error rendering panel:', error);
 			}
 		}
 	});
