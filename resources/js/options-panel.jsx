@@ -47,6 +47,119 @@ const OptionsPanel = ( {
 		setHasChanges( changed );
 	}, [ values, originalValues ] );
 
+	// Function to evaluate field conditions
+	const evaluateCondition = ( condition, currentValues, allFields ) => {
+		if ( ! condition || ! Array.isArray( condition ) ) {
+			return true; // No condition means always show
+		}
+
+		// All conditions in the array must be true (AND logic)
+		return condition.every( ( rule ) => {
+			const { key, compare, value } = rule;
+
+			if ( ! key ) {
+				return true; // No key specified, condition is always true
+			}
+
+			const fieldValue = currentValues[ key ];
+
+			// If no compare or value specified, check if field value is truthy
+			if ( compare === undefined && value === undefined ) {
+				return !! fieldValue;
+			}
+
+			// Find the field configuration to check its type
+			const targetField = allFields.find( ( field ) => field.name === key );
+			const fieldType = targetField?.type;
+
+			// Validate comparison operators based on field type
+			const isValidComparison = validateComparisonForFieldType( fieldType, compare, value );
+			if ( ! isValidComparison ) {
+				console.warn( `Invalid comparison "${ compare }" for field type "${ fieldType }"` );
+				return false;
+			}
+
+			const compareValue = value;
+
+			switch ( compare?.trim() || ' === ' ) {
+				case ' === ':
+					return fieldValue === compareValue;
+				case ' !== ':
+					return fieldValue !== compareValue;
+				case ' == ':
+					return fieldValue == compareValue; // eslint-disable-line eqeqeq
+				case ' != ':
+					return fieldValue != compareValue; // eslint-disable-line eqeqeq
+				case ' > ':
+					return parseFloat( fieldValue ) > parseFloat( compareValue );
+				case ' >= ':
+					return parseFloat( fieldValue ) >= parseFloat( compareValue );
+				case ' < ':
+					return parseFloat( fieldValue ) < parseFloat( compareValue );
+				case ' <= ':
+					return parseFloat( fieldValue ) <= parseFloat( compareValue );
+				case ' in ':
+					return Array.isArray( compareValue ) && compareValue.includes( fieldValue );
+				case ' not in ':
+					return Array.isArray( compareValue ) && ! compareValue.includes( fieldValue );
+				case ' contains ':
+					return String( fieldValue ).includes( String( compareValue ) );
+				case ' not contains ':
+					return ! String( fieldValue ).includes( String( compareValue ) );
+				case ' starts_with ':
+					return String( fieldValue ).startsWith( String( compareValue ) );
+				case ' ends_with ':
+					return String( fieldValue ).endsWith( String( compareValue ) );
+				case ' is_empty ':
+					return (
+						! fieldValue ||
+						fieldValue === '' ||
+						( Array.isArray( fieldValue ) && fieldValue.length === 0 )
+					);
+				case ' is_not_empty ':
+					return (
+						fieldValue &&
+						fieldValue !== '' &&
+						( ! Array.isArray( fieldValue ) || fieldValue.length > 0 )
+					);
+				default:
+					// Default to equality check
+					return fieldValue === compareValue;
+			}
+		} );
+	};
+
+	// Function to check if a field should be visible
+	const isFieldVisible = ( field ) => {
+		if ( ! field.condition ) {
+			return true; // No condition means always visible
+		}
+
+		return evaluateCondition( field.condition, values, fields );
+	};
+
+	// Function to validate comparison operators based on field type
+	const validateComparisonForFieldType = ( fieldType, compare, value ) => {
+		// For fields with fixed options (radio, select, checkbox, toggle)
+		const fixedOptionFields = [ 'radio', 'select', 'checkbox', 'toggle' ];
+
+		if ( fixedOptionFields.includes( fieldType ) ) {
+			// Only allow specific comparisons for fixed option fields
+			const allowedComparisons = [
+				' === ',
+				' !== ',
+				' == ',
+				' != ',
+				undefined, // No compare specified (truthy check)
+			];
+
+			return allowedComparisons.includes( compare );
+		}
+
+		// For other field types, allow all comparisons
+		return true;
+	};
+
 	// Fetch field configuration and current values
 	useEffect( () => {
 		const fetchData = async () => {
@@ -571,17 +684,24 @@ const OptionsPanel = ( {
 
 						<Panel>
 							<PanelBody>
-								{ fields.map( ( field ) => (
-									<PanelRow key={ field.name }>
-										{ renderField(
-											field,
-											values[ field.name ] !== undefined
-												? values[ field.name ]
-												: field.default,
-											handleFieldChange
-										) }
-									</PanelRow>
-								) ) }
+								{ fields.map( ( field ) => {
+									// Check if field should be visible based on conditions
+									if ( ! isFieldVisible( field ) ) {
+										return null; // Don't render hidden fields
+									}
+
+									return (
+										<PanelRow key={ field.name }>
+											{ renderField(
+												field,
+												values[ field.name ] !== undefined
+													? values[ field.name ]
+													: field.default,
+												handleFieldChange
+											) }
+										</PanelRow>
+									);
+								} ) }
 							</PanelBody>
 						</Panel>
 
@@ -654,17 +774,24 @@ const OptionsPanel = ( {
 				>
 					<Panel>
 						<PanelBody>
-							{ fields.map( ( field ) => (
-								<PanelRow key={ field.name }>
-									{ renderField(
-										field,
-										values[ field.name ] !== undefined
-											? values[ field.name ]
-											: field.default,
-										handleFieldChange
-									) }
-								</PanelRow>
-							) ) }
+							{ fields.map( ( field ) => {
+								// Check if field should be visible based on conditions
+								if ( ! isFieldVisible( field ) ) {
+									return null; // Don't render hidden fields
+								}
+
+								return (
+									<PanelRow key={ field.name }>
+										{ renderField(
+											field,
+											values[ field.name ] !== undefined
+												? values[ field.name ]
+												: field.default,
+											handleFieldChange
+										) }
+									</PanelRow>
+								);
+							} ) }
 						</PanelBody>
 					</Panel>
 					<div className="optify-actions">
@@ -701,17 +828,24 @@ const OptionsPanel = ( {
 			) }
 			<Panel>
 				<PanelBody>
-					{ fields.map( ( field ) => (
-						<PanelRow key={ field.name }>
-							{ renderField(
-								field,
-								values[ field.name ] !== undefined
-									? values[ field.name ]
-									: field.default,
-								handleFieldChange
-							) }
-						</PanelRow>
-					) ) }
+					{ fields.map( ( field ) => {
+						// Check if field should be visible based on conditions
+						if ( ! isFieldVisible( field ) ) {
+							return null; // Don't render hidden fields
+						}
+
+						return (
+							<PanelRow key={ field.name }>
+								{ renderField(
+									field,
+									values[ field.name ] !== undefined
+										? values[ field.name ]
+										: field.default,
+									handleFieldChange
+								) }
+							</PanelRow>
+						);
+					} ) }
 				</PanelBody>
 			</Panel>
 			<div className="optify-actions">
