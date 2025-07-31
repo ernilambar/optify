@@ -254,23 +254,6 @@ const OptionsPanel = ( {
 			} );
 
 			onSave?.( savedValues );
-
-			// Auto-close on successful save when using toggle or modal display
-			if ( display === 'toggle' ) {
-				// Small delay to show success message before closing
-				setTimeout( () => {
-					handleToggleClick();
-					setNotice( null ); // Clear the notice when closing
-				}, 1000 );
-			}
-
-			if ( display === 'modal' ) {
-				// Small delay to show success message before closing
-				setTimeout( () => {
-					setIsModalOpen( false );
-					setNotice( null ); // Clear the notice when closing
-				}, 1000 );
-			}
 		} catch ( error ) {
 			setNotice( {
 				type: 'error',
