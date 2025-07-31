@@ -273,7 +273,13 @@ const OptionsPanel = ( {
 		}
 
 		setIsToggleAnimating( true );
-		setIsToggleExpanded( ! isToggleExpanded );
+		const newExpandedState = ! isToggleExpanded;
+		setIsToggleExpanded( newExpandedState );
+
+		// Clear notice when closing the panel
+		if ( ! newExpandedState && notice ) {
+			setNotice( null );
+		}
 
 		// Reset animation state after transition completes
 		setTimeout( () => {
@@ -717,12 +723,6 @@ const OptionsPanel = ( {
 	if ( display === 'toggle' ) {
 		return (
 			<div className="optify-options-panel optify-options-panel--toggle">
-				{ notice && (
-					<Notice status={ notice.type } onRemove={ () => setNotice( null ) }>
-						{ notice.message }
-					</Notice>
-				) }
-
 				{ /* Toggle Icon */ }
 				<div className="optify-toggle-container">
 					<Button
@@ -755,6 +755,13 @@ const OptionsPanel = ( {
 						! isToggleExpanded ? 'optify-panel-content--collapsed' : ''
 					}` }
 				>
+					{ /* Notice - only show when panel is expanded */ }
+					{ isToggleExpanded && notice && (
+						<Notice status={ notice.type } onRemove={ () => setNotice( null ) }>
+							{ notice.message }
+						</Notice>
+					) }
+
 					<Panel>
 						<PanelBody>
 							{ fields.map( ( field ) => {
