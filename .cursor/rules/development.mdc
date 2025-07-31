@@ -32,8 +32,7 @@ alwaysApply: true
   - Always use Yoda conditions.
   - When possible use snake case naming convention.
   - Use PSR4 for naming PHP class name and file name.
-  - PHP inline comment should start with capital letter and end with period character.
-  - Inline comments must end in full-stops
+  - Inline comments in any type of files should start with capital letter and end with period character.
 
   Dependencies
   - WordPress (latest stable version)
