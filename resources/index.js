@@ -32,8 +32,6 @@ const OptifyOptionsPanelWrapper = ( { config, restUrl, nonce, panelId, display =
 document.addEventListener( 'DOMContentLoaded', () => {
 	const { optifyAdmin } = window;
 
-	console.log( optifyAdmin );
-
 	if ( ! optifyAdmin || ! optifyAdmin.panels ) {
 		return;
 	}
