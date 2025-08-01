@@ -39,6 +39,16 @@ const OptionsPanel = ( {
 
 	const { panelTitle, saveButtonText, savingText, loadingText, messages } = config;
 
+	// Get show_title setting from data attribute
+	const [ showTitle, setShowTitle ] = useState( true );
+	useEffect( () => {
+		const panelElement = document.getElementById( `optify-${ panelId }-panel` );
+		if ( panelElement ) {
+			const dataShowTitle = panelElement.getAttribute( 'data-show-title' );
+			setShowTitle( dataShowTitle !== 'false' );
+		}
+	}, [ panelId ] );
+
 	// Check if values have changed
 	useEffect( () => {
 		const changed = Object.keys( values ).some( ( key ) => {
@@ -630,6 +640,31 @@ const OptionsPanel = ( {
 		}
 	};
 
+	// Render panel title component
+	const renderPanelTitle = () => {
+		if ( ! showTitle ) {
+			return null;
+		}
+
+		// Show title in inline mode
+		// Show title in toggle mode when expanded
+		// Don't show title in modal mode (no title outside form content)
+		if ( display === 'modal' ) {
+			return null;
+		}
+
+		// In toggle mode, only show title when expanded
+		if ( display === 'toggle' && ! isToggleExpanded ) {
+			return null;
+		}
+
+		return (
+			<div className="optify-panel-title">
+				<h2>{ panelTitle }</h2>
+			</div>
+		);
+	};
+
 	if ( isLoading ) {
 		return <div className="optify-loading">{ loadingText }</div>;
 	}
@@ -661,7 +696,7 @@ const OptionsPanel = ( {
 				{ /* Modal Content */ }
 				{ isModalOpen && (
 					<Modal
-						title={ panelTitle }
+						title={ showTitle ? panelTitle : '' }
 						onRequestClose={ () => setIsModalOpen( false ) }
 						className="optify-modal"
 					>
@@ -673,6 +708,7 @@ const OptionsPanel = ( {
 
 						<Panel>
 							<PanelBody>
+								{ renderPanelTitle() }
 								{ fields.map( ( field ) => {
 									// Check if field should be visible based on conditions
 									if ( ! isFieldVisible( field ) ) {
@@ -764,6 +800,7 @@ const OptionsPanel = ( {
 
 					<Panel>
 						<PanelBody>
+							{ renderPanelTitle() }
 							{ fields.map( ( field ) => {
 								// Check if field should be visible based on conditions
 								if ( ! isFieldVisible( field ) ) {
@@ -818,6 +855,7 @@ const OptionsPanel = ( {
 			) }
 			<Panel>
 				<PanelBody>
+					{ renderPanelTitle() }
 					{ fields.map( ( field ) => {
 						// Check if field should be visible based on conditions
 						if ( ! isFieldVisible( field ) ) {

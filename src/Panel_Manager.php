@@ -133,18 +133,12 @@ class Panel_Manager {
 		if ( $args['wrapper'] ) {
 			$display = $args['display'];
 			printf(
-				'<div id="optify-%s-panel" class="%s optify-panel-%s" data-display="%s">',
+				'<div id="optify-%s-panel" class="%s optify-panel-%s" data-display="%s" data-show-title="%s">',
 				esc_attr( $panel_id ),
 				esc_attr( $args['container_class'] ),
 				esc_attr( $panel_id ),
-				esc_attr( $display )
-			);
-		}
-
-		if ( $args['show_title'] ) {
-			printf(
-				'<h2>%s</h2>',
-				esc_html( $panel->get_panel_title() )
+				esc_attr( $display ),
+				esc_attr( $args['show_title'] ? 'true' : 'false' )
 			);
 		}
 
