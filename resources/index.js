@@ -53,8 +53,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		const panelId = container.id.replace( 'optify-', '' ).replace( '-panel', '' );
 		const display = container.dataset.display || 'inline';
 
-		console.log( panels[ panelId ] );
-
 		if ( panels[ panelId ] ) {
 			try {
 				// Mark container as processed
