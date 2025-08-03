@@ -44,6 +44,15 @@ class Optify {
 	private static $rest_version;
 
 	/**
+	 * Registered instances.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array
+	 */
+	private static $instances = [];
+
+	/**
 	 * Initialize the panel system.
 	 *
 	 * @since 1.0.0
@@ -58,6 +67,102 @@ class Optify {
 
 		// Initialize REST API routes.
 		self::init_rest_api( $namespace, $version );
+	}
+
+	/**
+	 * Get an existing instance or create a new one.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $namespace REST API namespace.
+	 * @param string $version REST API version.
+	 * @return Optify_Instance Instance object.
+	 */
+	public static function get_instance( $namespace, $version ) {
+		$instance_id = self::generate_instance_id( $namespace, $version );
+
+		if ( isset( self::$instances[ $instance_id ] ) ) {
+			return self::$instances[ $instance_id ];
+		}
+
+		return self::create_instance( $namespace, $version );
+	}
+
+	/**
+	 * Create a new Optify instance.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $namespace REST API namespace.
+	 * @param string $version REST API version.
+	 * @return Optify_Instance Instance object.
+	 */
+	protected static function create_instance( $namespace, $version ) {
+		$instance_id = self::generate_instance_id( $namespace, $version );
+
+		// Check if instance already exists.
+		if ( isset( self::$instances[ $instance_id ] ) ) {
+			_doing_it_wrong(
+				__METHOD__,
+				sprintf(
+					'Optify: Instance for namespace "%s" and version "%s" already exists.',
+					esc_html( $namespace ),
+					esc_html( $version )
+				),
+				'1.0.0'
+			);
+			return self::$instances[ $instance_id ];
+		}
+
+		// Create new instance.
+		$instance = new Optify_Instance( $instance_id, $namespace, $version );
+		self::$instances[ $instance_id ] = $instance;
+
+		return $instance;
+	}
+
+	/**
+	 * Get an existing instance only.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $namespace REST API namespace.
+	 * @param string $version REST API version.
+	 * @return Optify_Instance|null Instance object or null if not found.
+	 */
+	protected static function get_existing_instance( $namespace, $version ) {
+		$instance_id = self::generate_instance_id( $namespace, $version );
+		return isset( self::$instances[ $instance_id ] ) ? self::$instances[ $instance_id ] : null;
+	}
+
+	/**
+	 * Get all registered instances.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array Array of instance objects.
+	 */
+	public static function get_all_instances() {
+		return self::$instances;
+	}
+
+	/**
+	 * Remove an instance.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $namespace REST API namespace.
+	 * @param string $version REST API version.
+	 * @return bool True if instance was removed.
+	 */
+	protected static function remove_instance( $namespace, $version ) {
+		$instance_id = self::generate_instance_id( $namespace, $version );
+		if ( isset( self::$instances[ $instance_id ] ) ) {
+			unset( self::$instances[ $instance_id ] );
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -212,5 +317,18 @@ class Optify {
 		}
 
 		return $panel_configs;
+	}
+
+	/**
+	 * Generate instance ID from namespace and version.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $namespace REST API namespace.
+	 * @param string $version REST API version.
+	 * @return string Instance identifier.
+	 */
+	private static function generate_instance_id( $namespace, $version ) {
+		return $namespace . '-' . $version;
 	}
 }

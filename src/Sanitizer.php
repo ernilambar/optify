@@ -51,7 +51,17 @@ class Sanitizer {
 				return sanitize_text_field( $value );
 
 			case 'multi-check':
-				return is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : [];
+				// Convert empty/null values to empty array
+				if ( null === $value || '' === $value ) {
+					return [];
+				}
+
+				if ( ! is_array( $value ) ) {
+					return [];
+				}
+				// Sanitize each value and remove duplicates
+				$sanitized_values = array_map( 'sanitize_text_field', $value );
+				return array_unique( $sanitized_values );
 
 			case 'sortable':
 				return is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : [];
