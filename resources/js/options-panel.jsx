@@ -188,8 +188,15 @@ const OptionsPanel = ( {
 
 	// Function to validate comparison operators based on field type
 	const validateComparisonForFieldType = ( fieldType, compare, value ) => {
-		// For fields with fixed options (radio, select, checkbox, toggle, multi-check)
-		const fixedOptionFields = [ 'radio', 'select', 'checkbox', 'toggle', 'multi-check' ];
+		// For fields with fixed options (radio, select, checkbox, toggle, multi-check, sortable)
+		const fixedOptionFields = [
+			'radio',
+			'select',
+			'checkbox',
+			'toggle',
+			'multi-check',
+			'sortable',
+		];
 
 		if ( fixedOptionFields.includes( fieldType ) ) {
 			// Only allow specific comparisons for fixed option fields
