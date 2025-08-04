@@ -66,7 +66,10 @@ class Rest_Handler {
 			);
 		}
 
-		$panel = Panel_Manager::get_panel( $panel_id );
+		// Get the instance from the request context
+		$instance_id = self::get_instance_from_request( $request );
+
+		$panel = Panel_Manager::get_panel( $panel_id, $instance_id );
 		if ( ! $panel ) {
 			return Api_Handler::create_error(
 				'invalid_panel',
@@ -116,7 +119,10 @@ class Rest_Handler {
 			);
 		}
 
-		$panel = Panel_Manager::get_panel( $panel_id );
+		// Get the instance from the request context
+		$instance_id = self::get_instance_from_request( $request );
+
+		$panel = Panel_Manager::get_panel( $panel_id, $instance_id );
 		if ( ! $panel ) {
 			return Api_Handler::create_error(
 				'invalid_panel',
@@ -158,7 +164,10 @@ class Rest_Handler {
 		$panel_id = $request->get_param( 'panel' );
 		$values   = $request->get_param( 'values' );
 
-		$panel = Panel_Manager::get_panel( $panel_id );
+		// Get the instance from the request context
+		$instance_id = self::get_instance_from_request( $request );
+
+		$panel = Panel_Manager::get_panel( $panel_id, $instance_id );
 		if ( ! $panel ) {
 			return Api_Handler::create_error(
 				'invalid_panel',
@@ -186,5 +195,37 @@ class Rest_Handler {
 		}
 
 		return Api_Handler::create_success( [ 'values' => $sanitized_values ] );
+	}
+
+	/**
+	 * Get instance ID from request.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return string|null Instance ID or null if not found.
+	 */
+	private static function get_instance_from_request( $request ) {
+		// Extract instance from the REST route
+		$route = $request->get_route();
+
+		// The route format is: /wp-json/{namespace}/{version}/fields/{panel}
+		// We need to extract the namespace to determine the instance
+		$route_parts = explode( '/', trim( $route, '/' ) );
+
+		// Find the namespace part (should be after 'wp-json')
+		$wp_json_index = array_search( 'wp-json', $route_parts );
+		if ( $wp_json_index !== false && isset( $route_parts[ $wp_json_index + 1 ] ) ) {
+			$namespace = $route_parts[ $wp_json_index + 1 ];
+
+			// The namespace format is: {original_namespace}-{instance_id}
+			// Extract the instance ID from the namespace
+			$namespace_parts = explode( '-', $namespace );
+			if ( count( $namespace_parts ) > 1 ) {
+				return end( $namespace_parts );
+			}
+		}
+
+		return null;
 	}
 }

@@ -149,8 +149,9 @@ class Asset_Loader {
 	 *
 	 * @param string $hook Current admin page hook.
 	 * @param array  $panel_configs Panel configurations by location.
+	 * @param string $global_var_name Global variable name for localization.
 	 */
-	public static function enqueue_panel_assets( $hook, $panel_configs = [] ) {
+	public static function enqueue_panel_assets( $hook, $panel_configs = [], $global_var_name = 'optifyAdmin' ) {
 		// Initialize asset manager.
 		Asset_Manager::init();
 
@@ -205,7 +206,7 @@ class Asset_Loader {
 
 			wp_localize_script(
 				'optify-admin-options',
-				'optifyAdmin',
+				$global_var_name,
 				[
 					'nonce'       => wp_create_nonce( 'wp_rest' ),
 					'restUrl'     => rest_url( self::$rest_namespace . '/' . self::$rest_version . '/' ),

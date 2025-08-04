@@ -93,8 +93,30 @@ const OptionsPanel = ( {
 
 			switch ( compare?.trim() || ' === ' ) {
 				case ' === ':
+					// For multi-check fields, check if arrays have same values
+					if (
+						fieldType === 'multi-check' &&
+						Array.isArray( fieldValue ) &&
+						Array.isArray( compareValue )
+					) {
+						return (
+							fieldValue.length === compareValue.length &&
+							fieldValue.every( ( val ) => compareValue.includes( val ) )
+						);
+					}
 					return fieldValue === compareValue;
 				case ' !== ':
+					// For multi-check fields, check if arrays have different values
+					if (
+						fieldType === 'multi-check' &&
+						Array.isArray( fieldValue ) &&
+						Array.isArray( compareValue )
+					) {
+						return (
+							fieldValue.length !== compareValue.length ||
+							! fieldValue.every( ( val ) => compareValue.includes( val ) )
+						);
+					}
 					return fieldValue !== compareValue;
 				case ' == ':
 					return fieldValue == compareValue; // eslint-disable-line eqeqeq
@@ -109,12 +131,28 @@ const OptionsPanel = ( {
 				case ' <= ':
 					return parseFloat( fieldValue ) <= parseFloat( compareValue );
 				case ' in ':
+					// For multi-check fields, check if any value is in the compare array
+					if ( fieldType === 'multi-check' && Array.isArray( fieldValue ) ) {
+						return fieldValue.some( ( val ) => compareValue.includes( val ) );
+					}
 					return Array.isArray( compareValue ) && compareValue.includes( fieldValue );
 				case ' not in ':
+					// For multi-check fields, check if no value is in the compare array
+					if ( fieldType === 'multi-check' && Array.isArray( fieldValue ) ) {
+						return ! fieldValue.some( ( val ) => compareValue.includes( val ) );
+					}
 					return Array.isArray( compareValue ) && ! compareValue.includes( fieldValue );
 				case ' contains ':
+					// For multi-check fields, check if the field contains the compare value
+					if ( fieldType === 'multi-check' && Array.isArray( fieldValue ) ) {
+						return fieldValue.includes( compareValue );
+					}
 					return String( fieldValue ).includes( String( compareValue ) );
 				case ' not contains ':
+					// For multi-check fields, check if the field doesn't contain the compare value
+					if ( fieldType === 'multi-check' && Array.isArray( fieldValue ) ) {
+						return ! fieldValue.includes( compareValue );
+					}
 					return ! String( fieldValue ).includes( String( compareValue ) );
 				case ' starts_with ':
 					return String( fieldValue ).startsWith( String( compareValue ) );
@@ -150,8 +188,8 @@ const OptionsPanel = ( {
 
 	// Function to validate comparison operators based on field type
 	const validateComparisonForFieldType = ( fieldType, compare, value ) => {
-		// For fields with fixed options (radio, select, checkbox, toggle)
-		const fixedOptionFields = [ 'radio', 'select', 'checkbox', 'toggle' ];
+		// For fields with fixed options (radio, select, checkbox, toggle, multi-check)
+		const fixedOptionFields = [ 'radio', 'select', 'checkbox', 'toggle', 'multi-check' ];
 
 		if ( fixedOptionFields.includes( fieldType ) ) {
 			// Only allow specific comparisons for fixed option fields
@@ -160,6 +198,10 @@ const OptionsPanel = ( {
 				' !== ',
 				' == ',
 				' != ',
+				' in ',
+				' not in ',
+				' contains ',
+				' not contains ',
 				undefined, // No compare specified (truthy check)
 			];
 
@@ -208,8 +250,44 @@ const OptionsPanel = ( {
 
 				const valuesData = await valuesResponse.json();
 				const currentValues = valuesData.data || {};
-				setValues( currentValues );
-				setOriginalValues( currentValues ); // Set original values on load
+
+				// Process values to ensure proper types for multi-check fields
+				const processedValues = {};
+				Object.keys( currentValues ).forEach( ( key ) => {
+					const field = fields.find( ( f ) => f.name === key );
+					let value = currentValues[ key ];
+
+					// Ensure multi-check fields are always arrays
+					if ( field && field.type === 'multi-check' ) {
+						if ( ! Array.isArray( value ) ) {
+							value = [];
+						} else {
+							// Filter out invalid values that don't exist in available choices
+							const validChoices = ( field.choices || [] ).map(
+								( choice ) => choice.value
+							);
+							value = value.filter( ( val ) => validChoices.includes( val ) );
+
+							// Log removed invalid values for debugging
+							const invalidValues = currentValues[ key ].filter(
+								( val ) => ! validChoices.includes( val )
+							);
+							if ( invalidValues.length > 0 ) {
+								console.warn(
+									`Multi-check field "${ key }" had invalid values removed:`,
+									invalidValues,
+									'Available choices:',
+									validChoices
+								);
+							}
+						}
+					}
+
+					processedValues[ key ] = value;
+				} );
+
+				setValues( processedValues );
+				setOriginalValues( processedValues ); // Set original values on load
 			} catch ( error ) {
 				setNotice( {
 					type: 'error',
@@ -225,9 +303,43 @@ const OptionsPanel = ( {
 	}, [ restUrl, nonce, messages.loadError, onError, panelId ] );
 
 	const handleFieldChange = ( fieldName, value ) => {
+		// Find the field configuration to check if it's a multi-check field
+		const field = fields.find( ( f ) => f.name === fieldName );
+
+		// Ensure multi-check fields always get array values
+		let processedValue = value;
+		if ( field && field.type === 'multi-check' ) {
+			// Convert null/undefined/empty string to empty array
+			if ( value === null || value === undefined || value === '' ) {
+				processedValue = [];
+			} else if ( ! Array.isArray( value ) ) {
+				// This should never happen now, but log for debugging
+				console.error(
+					`Multi-check field "${ fieldName }" received non-array value:`,
+					value
+				);
+				processedValue = [];
+			} else {
+				// Filter out invalid values that don't exist in available choices
+				const validChoices = ( field.choices || [] ).map( ( choice ) => choice.value );
+				processedValue = value.filter( ( val ) => validChoices.includes( val ) );
+
+				// Log removed invalid values for debugging
+				const invalidValues = value.filter( ( val ) => ! validChoices.includes( val ) );
+				if ( invalidValues.length > 0 ) {
+					console.warn(
+						`Multi-check field "${ fieldName }" had invalid values removed:`,
+						invalidValues,
+						'Available choices:',
+						validChoices
+					);
+				}
+			}
+		}
+
 		setValues( ( prev ) => ( {
 			...prev,
-			[ fieldName ]: value,
+			[ fieldName ]: processedValue,
 		} ) );
 	};
 
@@ -549,6 +661,25 @@ const OptionsPanel = ( {
 						: ''
 				}`;
 
+				// Ensure value is always an array for multi-check fields
+				const multiCheckValue = Array.isArray( value ) ? value : field.default || [];
+
+				// Filter out invalid values that don't exist in available choices
+				const validChoices = ( choices || [] ).map( ( choice ) => choice.value );
+				const filteredValue = multiCheckValue.filter( ( val ) =>
+					validChoices.includes( val )
+				);
+
+				// Debug: Log the value to see what's being received
+				if ( process.env.NODE_ENV === 'development' ) {
+					console.log(
+						`Multi-check field "${ name }" value:`,
+						value,
+						'processed as:',
+						filteredValue
+					);
+				}
+
 				return (
 					<div className="optify-field optify-field-type-multi-check">
 						<span className="optify-field-label">{ label }</span>
@@ -561,15 +692,9 @@ const OptionsPanel = ( {
 									<input
 										type="checkbox"
 										value={ choice.value }
-										checked={
-											Array.isArray( value )
-												? value.includes( choice.value )
-												: false
-										}
+										checked={ filteredValue.includes( choice.value ) }
 										onChange={ ( e ) => {
-											let newValue = Array.isArray( value )
-												? [ ...value ]
-												: [];
+											let newValue = [ ...filteredValue ];
 											if ( e.target.checked ) {
 												newValue.push( choice.value );
 											} else {
@@ -577,6 +702,7 @@ const OptionsPanel = ( {
 													( v ) => v !== choice.value
 												);
 											}
+											// Always ensure we send an array, even if empty
 											handleFieldChange( name, newValue );
 										} }
 									/>

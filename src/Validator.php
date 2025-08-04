@@ -165,26 +165,47 @@ class Validator {
 			case 'multi-check':
 				$choices      = $field['choices'] ?? [];
 				$valid_values = array_column( $choices, 'value' );
+				nslog( $valid_values );
+				nslog( $value );
+
+				// Convert only null/empty string to empty array
+				if ( null === $value || '' === $value ) {
+					$value = [];
+				}
+
+				// Multi-check fields must always be arrays
 				if ( ! is_array( $value ) ) {
 					return new \WP_Error(
-						'invalid_multicheck',
+						'invalid_multicheck_type',
 						sprintf(
-							__( 'Invalid value for field "%s".', 'optify' ),
-							$field['label']
+							__( 'Field "%s" must be an array. Received %s.', 'optify' ),
+							$field['label'],
+							gettype( $value )
 						)
 					);
 				}
+
+				// If array is empty, that's valid (no checkboxes selected)
+				if ( empty( $value ) ) {
+					break;
+				}
+
+				// Validate each value against available choices
 				foreach ( $value as $v ) {
 					if ( ! in_array( $v, $valid_values, true ) ) {
 						return new \WP_Error(
 							'invalid_multicheck_choice',
 							sprintf(
-								__( 'Invalid value for field "%s".', 'optify' ),
+								__( 'Invalid value "%s" for field "%s". Value must be one of the available choices.', 'optify' ),
+								$v,
 								$field['label']
 							)
 						);
 					}
 				}
+
+				// Remove duplicates
+				$value = array_unique( $value );
 				break;
 
 			case 'sortable':
@@ -234,7 +255,20 @@ class Validator {
 				$field_name  = $field['name'];
 				$field_value = isset( $values[ $field_name ] ) ? $values[ $field_name ] : null;
 
+				// Check if field is empty based on its type
+				$is_empty = false;
+
 				if ( null === $field_value || '' === $field_value ) {
+					$is_empty = true;
+				} elseif ( 'multi-check' === $field['type'] && is_array( $field_value ) && empty( $field_value ) ) {
+					// For multi-check fields, empty array means not filled
+					$is_empty = true;
+				} elseif ( 'sortable' === $field['type'] && is_array( $field_value ) && empty( $field_value ) ) {
+					// For sortable fields, empty array means not filled
+					$is_empty = true;
+				}
+
+				if ( $is_empty ) {
 					$errors[] = sprintf(
 						__( 'Field "%s" is required.', 'optify' ),
 						$field['label']
