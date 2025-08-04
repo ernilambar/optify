@@ -113,8 +113,9 @@ class Panel_Manager {
 	 *
 	 * @param string $panel_id Panel identifier.
 	 * @param array  $args Render arguments.
+	 * @param string $instance_id Optional instance identifier.
 	 */
-	public static function render_panel( $panel_id, $args = [] ) {
+	public static function render_panel( $panel_id, $args = [], $instance_id = null ) {
 		$panel = self::get_panel( $panel_id );
 		if ( ! $panel ) {
 			return;
@@ -132,13 +133,23 @@ class Panel_Manager {
 
 		if ( $args['wrapper'] ) {
 			$display = $args['display'];
+			$data_attributes = sprintf(
+				'data-display="%s" data-show-title="%s"',
+				esc_attr( $display ),
+				esc_attr( $args['show_title'] ? 'true' : 'false' )
+			);
+
+			// Add instance data if provided
+			if ( $instance_id ) {
+				$data_attributes .= sprintf( ' data-instance="%s"', esc_attr( $instance_id ) );
+			}
+
 			printf(
-				'<div id="optify-%s-panel" class="%s optify-panel-%s" data-display="%s" data-show-title="%s">',
+				'<div id="optify-%s-panel" class="%s optify-panel-%s" %s>',
 				esc_attr( $panel_id ),
 				esc_attr( $args['container_class'] ),
 				esc_attr( $panel_id ),
-				esc_attr( $display ),
-				esc_attr( $args['show_title'] ? 'true' : 'false' )
+				$data_attributes
 			);
 		}
 

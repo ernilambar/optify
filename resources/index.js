@@ -45,15 +45,26 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		return;
 	}
 
+	// Track React roots to prevent duplicate creation
+	const reactRoots = new Map();
+
 	// Process each instance
 	Object.entries( optifyInstances ).forEach( ( [ globalVarName, instanceData ] ) => {
 		const { panels, restUrl, nonce } = instanceData;
 
-		// Use a single selector to get all panel containers for this instance
-		// Look for containers that match this instance's pattern
-		const panelContainers = document.querySelectorAll(
-			`[id^="optify-"][id$="-panel"][data-instance="${ globalVarName }"], [id^="optify-"][id$="-panel"]`
+		// Get panel containers for this specific instance
+		// Look for containers that have data-instance matching this global variable name
+		let panelContainers = document.querySelectorAll(
+			`[id^="optify-"][id$="-panel"][data-instance="${ globalVarName }"]`
 		);
+
+		// If no instance-specific containers found, fall back to containers without instance data
+		// This provides backward compatibility for panels that don't have instance data
+		if ( panelContainers.length === 0 ) {
+			panelContainers = document.querySelectorAll(
+				`[id^="optify-"][id$="-panel"]:not([data-instance])`
+			);
+		}
 
 		// Track processed containers to avoid duplicates
 		const processedContainers = new Set();
@@ -73,7 +84,17 @@ document.addEventListener( 'DOMContentLoaded', () => {
 					// Mark container as processed
 					processedContainers.add( container );
 
-					createRoot( container ).render(
+					// Check if a React root already exists for this container
+					let root = reactRoots.get( container );
+
+					if ( ! root ) {
+						// Create new React root only if one doesn't exist
+						root = createRoot( container );
+						reactRoots.set( container, root );
+					}
+
+					// Render the component using the existing or new root
+					root.render(
 						<OptifyOptionsPanelWrapper
 							config={ panels[ panelId ] }
 							restUrl={ restUrl }
