@@ -165,8 +165,6 @@ class Validator {
 			case 'multi-check':
 				$choices      = $field['choices'] ?? [];
 				$valid_values = array_column( $choices, 'value' );
-				nslog( $valid_values );
-				nslog( $value );
 
 				// Convert only null/empty string to empty array
 				if ( null === $value || '' === $value ) {
