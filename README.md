@@ -164,8 +164,6 @@ Supported field types (all support optional `description` property):
 - `message` - Message with status (info, success, warning, error, description)
 
 
-
-
 ## License
 
 MIT

@@ -436,6 +436,79 @@ const OptionsPanel = ( {
 			return customProps[ propName ] !== undefined ? customProps[ propName ] : defaultValue;
 		};
 
+		// Helper function to extract HTML attributes from field configuration
+		const extractHtmlAttributes = ( fieldConfig ) => {
+			const htmlAttributes = {};
+
+			// Only extract attributes from the nested 'attributes' object
+			const attributesSource = fieldConfig.attributes;
+
+			// If no attributes object is provided, return empty object
+			if ( ! attributesSource || typeof attributesSource !== 'object' ) {
+				return htmlAttributes;
+			}
+
+			// Common HTML attributes that should be applied to inputs
+			const validHtmlAttributes = [
+				'placeholder',
+				'readonly',
+				'disabled',
+				'required',
+				'maxlength',
+				'minlength',
+				'pattern',
+				'autocomplete',
+				'autofocus',
+				'form',
+				'list',
+				'multiple',
+				'name',
+				'size',
+				'step',
+				'type',
+				'value',
+				'accept',
+				'alt',
+				'checked',
+				'dirname',
+				'formaction',
+				'formenctype',
+				'formmethod',
+				'formnovalidate',
+				'formtarget',
+				'height',
+				'max',
+				'min',
+				'src',
+				'width',
+				'rel',
+				'target',
+				'aria-label',
+				'aria-describedby',
+				'aria-required',
+				'aria-invalid',
+				'data-*', // Allow any data-* attributes
+			];
+
+			// Extract valid HTML attributes
+			Object.keys( attributesSource ).forEach( ( key ) => {
+				// Allow any data-* attribute
+				if ( key.startsWith( 'data-' ) ) {
+					htmlAttributes[ key ] = attributesSource[ key ];
+				}
+				// Allow any aria-* attribute
+				else if ( key.startsWith( 'aria-' ) ) {
+					htmlAttributes[ key ] = attributesSource[ key ];
+				}
+				// Allow specific valid HTML attributes
+				else if ( validHtmlAttributes.includes( key ) ) {
+					htmlAttributes[ key ] = attributesSource[ key ];
+				}
+			} );
+
+			return htmlAttributes;
+		};
+
 		// Helper function to render field description
 		const renderDescription = () => {
 			if ( ! description ) {
@@ -446,11 +519,8 @@ const OptionsPanel = ( {
 
 		switch ( type ) {
 			case 'text':
-				const textSettings = {
-					readonly: false,
-					size: 'medium',
-					...field.settings,
-				};
+				// Extract HTML attributes
+				const textHtmlAttributes = extractHtmlAttributes( field );
 
 				return (
 					<div className="optify-field optify-field-type-text">
@@ -459,40 +529,15 @@ const OptionsPanel = ( {
 						<input
 							type="text"
 							value={ value }
-							readOnly={ textSettings.readonly }
 							onChange={ ( e ) => handleFieldChange( name, e.target.value ) }
 							className="optify-field-input"
+							{ ...textHtmlAttributes }
 						/>
-						{ ( choices || [] ).length > 0 && (
-							<div className="optify-field-quick-select">
-								<span className="optify-field-quick-select-label">
-									Quick select:
-								</span>
-								<ButtonGroup>
-									{ ( choices || [] ).map( ( choice ) => (
-										<Button
-											key={ choice.value }
-											variant={
-												value === choice.value ? 'primary' : 'secondary'
-											}
-											size="small"
-											onClick={ () =>
-												handleFieldChange( name, choice.value )
-											}
-										>
-											{ choice.label }
-										</Button>
-									) ) }
-								</ButtonGroup>
-							</div>
-						) }
 					</div>
 				);
 			case 'email':
-				const emailSettings = {
-					size: 'medium',
-					...field.settings,
-				};
+				// Extract HTML attributes
+				const emailHtmlAttributes = extractHtmlAttributes( field );
 
 				return (
 					<div className="optify-field optify-field-type-email">
@@ -503,10 +548,14 @@ const OptionsPanel = ( {
 							value={ value }
 							onChange={ ( e ) => handleFieldChange( name, e.target.value ) }
 							className="optify-field-input"
+							{ ...emailHtmlAttributes }
 						/>
 					</div>
 				);
 			case 'url':
+				// Extract HTML attributes
+				const urlHtmlAttributes = extractHtmlAttributes( field );
+
 				return (
 					<div className="optify-field optify-field-type-url">
 						<label className="optify-field-label">{ label }</label>
@@ -516,14 +565,13 @@ const OptionsPanel = ( {
 							type="url"
 							value={ value }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
+							{ ...urlHtmlAttributes }
 						/>
 					</div>
 				);
 			case 'number':
-				const numberSettings = {
-					size: 'medium',
-					...field.settings,
-				};
+				// Extract HTML attributes
+				const numberHtmlAttributes = extractHtmlAttributes( field );
 
 				// Helper function to compare number values properly
 				const isNumberValueEqual = ( inputValue, choiceValue ) => {
@@ -544,6 +592,7 @@ const OptionsPanel = ( {
 							value={ value }
 							onChange={ ( e ) => handleFieldChange( name, e.target.value ) }
 							className="optify-field-input"
+							{ ...numberHtmlAttributes }
 						/>
 						{ ( choices || [] ).length > 0 && (
 							<div className="optify-field-quick-select">
@@ -573,6 +622,9 @@ const OptionsPanel = ( {
 					</div>
 				);
 			case 'password':
+				// Extract HTML attributes
+				const passwordHtmlAttributes = extractHtmlAttributes( field );
+
 				return (
 					<div className="optify-field optify-field-type-password">
 						<label className="optify-field-label">{ label }</label>
@@ -582,15 +634,13 @@ const OptionsPanel = ( {
 							type="password"
 							value={ value }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
+							{ ...passwordHtmlAttributes }
 						/>
 					</div>
 				);
 			case 'textarea':
-				const textareaSettings = {
-					readonly: false,
-					size: 'medium',
-					...field.settings,
-				};
+				// Extract HTML attributes
+				const textareaHtmlAttributes = extractHtmlAttributes( field );
 
 				return (
 					<div className="optify-field optify-field-type-textarea">
@@ -598,9 +648,9 @@ const OptionsPanel = ( {
 						{ renderDescription() }
 						<textarea
 							value={ value }
-							readOnly={ textareaSettings.readonly }
 							onChange={ ( e ) => handleFieldChange( name, e.target.value ) }
 							className="optify-field-textarea"
+							{ ...textareaHtmlAttributes }
 						/>
 					</div>
 				);
@@ -612,6 +662,9 @@ const OptionsPanel = ( {
 					spacing: 'normal',
 					...field.settings, // Merge any custom settings
 				};
+
+				// Extract HTML attributes
+				const radioHtmlAttributes = extractHtmlAttributes( field );
 
 				const radioGroupClass = `optify-field-radio-group optify-field-radio-group--${
 					radioSettings.layout
@@ -632,6 +685,7 @@ const OptionsPanel = ( {
 										onChange={ ( e ) =>
 											handleFieldChange( name, e.target.value )
 										}
+										{ ...radioHtmlAttributes }
 									/>
 									{ choice.label }
 								</label>
@@ -640,6 +694,9 @@ const OptionsPanel = ( {
 					</div>
 				);
 			case 'checkbox':
+				// Extract HTML attributes
+				const checkboxHtmlAttributes = extractHtmlAttributes( field );
+
 				return (
 					<div className="optify-field optify-field-type-checkbox">
 						<label className="optify-field-label">{ label }</label>
@@ -648,10 +705,14 @@ const OptionsPanel = ( {
 							label=""
 							checked={ value }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
+							{ ...checkboxHtmlAttributes }
 						/>
 					</div>
 				);
 			case 'select':
+				// Extract HTML attributes
+				const selectHtmlAttributes = extractHtmlAttributes( field );
+
 				return (
 					<div className="optify-field optify-field-type-select">
 						<label className="optify-field-label">{ label }</label>
@@ -661,10 +722,14 @@ const OptionsPanel = ( {
 							value={ value }
 							options={ choices || [] }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
+							{ ...selectHtmlAttributes }
 						/>
 					</div>
 				);
 			case 'toggle':
+				// Extract HTML attributes
+				const toggleHtmlAttributes = extractHtmlAttributes( field );
+
 				return (
 					<div className="optify-field optify-field-type-toggle">
 						<label className="optify-field-label">{ label }</label>
@@ -673,6 +738,7 @@ const OptionsPanel = ( {
 							label=""
 							checked={ !! value }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
+							{ ...toggleHtmlAttributes }
 						/>
 					</div>
 				);
@@ -684,6 +750,9 @@ const OptionsPanel = ( {
 					spacing: 'normal',
 					...field.settings,
 				};
+
+				// Extract HTML attributes
+				const multiCheckHtmlAttributes = extractHtmlAttributes( field );
 
 				const multiCheckGroupClass = `optify-field-multi-check-group optify-field-multi-check-group--${
 					multiCheckSettings.layout
@@ -738,6 +807,7 @@ const OptionsPanel = ( {
 											// Always ensure we send an array, even if empty
 											handleFieldChange( name, newValue );
 										} }
+										{ ...multiCheckHtmlAttributes }
 									/>
 									{ choice.label }
 								</label>
