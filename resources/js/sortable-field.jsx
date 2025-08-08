@@ -191,7 +191,7 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 
 	return (
 		<div className="optify-field optify-field-type-sortable">
-			<label className="optify-field-label">{ label }</label>
+			{ label && <label className="optify-field-label">{ label }</label> }
 			<div className="optify-sortable-container">
 				<DragDropContext onDragEnd={ handleDragEnd }>
 					<Droppable droppableId="sortable-list">

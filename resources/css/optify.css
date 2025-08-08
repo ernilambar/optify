@@ -53,6 +53,15 @@
 	padding: 0;
 }
 
+.optify-field-description {
+	display: block;
+	margin-bottom: 8px;
+	font-size: 13px;
+	color: #646970;
+	line-height: 1.4;
+	font-style: italic;
+}
+
 /* More specific selectors to override CSS-in-JS styles */
 .optify-field label[class*="css-"],
 .optify-field label[class*="styled-"],
