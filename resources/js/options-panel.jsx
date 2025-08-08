@@ -241,6 +241,7 @@ const OptionsPanel = ( {
 
 				const fieldsData = await fieldsResponse.json();
 				const fieldConfig = fieldsData.data || [];
+
 				setFields( fieldConfig );
 
 				// Fetch current values
@@ -428,6 +429,7 @@ const OptionsPanel = ( {
 		delete customProps.choices;
 		delete customProps.default;
 		delete customProps.required;
+		delete customProps.description;
 
 		// Helper function to get custom property with default
 		const getCustomProp = ( propName, defaultValue = null ) => {
