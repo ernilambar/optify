@@ -105,10 +105,10 @@ class Asset_Loader {
 		}
 
 		self::$package_dir_path = $package_dir;
-		self::$package_url = $package_url;
-		self::$rest_namespace = $rest_namespace;
-		self::$rest_version = $rest_version;
-		self::$asset_files = [
+		self::$package_url      = $package_url;
+		self::$rest_namespace   = $rest_namespace;
+		self::$rest_version     = $rest_version;
+		self::$asset_files      = [
 			'css_file'   => 'assets/optify.css',
 			'js_file'    => 'assets/optify.js',
 			'asset_file' => 'assets/optify.asset.php',
@@ -152,6 +152,30 @@ class Asset_Loader {
 	 * @param string $global_var_name Global variable name for localization.
 	 */
 	public static function enqueue_panel_assets( $hook, $panel_configs = [], $global_var_name = 'optifyAdmin' ) {
+		// Get package version and calculate priority.
+		$version  = Optify::VERSION;
+		$priority = self::version_to_priority( $version );
+
+		// Hook with version-based priority (higher version = lower priority = wins).
+		add_action(
+			'admin_enqueue_scripts',
+			function () use ( $hook, $panel_configs, $global_var_name ) {
+				self::do_enqueue_assets( $hook, $panel_configs, $global_var_name );
+			},
+			$priority
+		);
+	}
+
+	/**
+	 * Do the actual asset enqueuing.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $hook Current admin page hook.
+	 * @param array  $panel_configs Panel configurations by location.
+	 * @param string $global_var_name Global variable name for localization.
+	 */
+	private static function do_enqueue_assets( $hook, $panel_configs, $global_var_name ) {
 		// Initialize asset manager.
 		Asset_Manager::init();
 
@@ -187,7 +211,7 @@ class Asset_Loader {
 		if ( file_exists( $css_file ) ) {
 			wp_enqueue_style(
 				'optify-admin-styles',
-				$package_paths['url'] . '/'. self::$asset_files['css_file'],
+				$package_paths['url'] . '/' . self::$asset_files['css_file'],
 				[],
 				$asset['version']
 			);
@@ -198,7 +222,7 @@ class Asset_Loader {
 		if ( file_exists( $js_file ) ) {
 			wp_enqueue_script(
 				'optify-admin-options',
-				$package_paths['url'] . '/'. self::$asset_files['js_file'],
+				$package_paths['url'] . '/' . self::$asset_files['js_file'],
 				$asset['dependencies'],
 				$asset['version'],
 				true
@@ -215,6 +239,28 @@ class Asset_Loader {
 				]
 			);
 		}
+	}
+
+
+
+	/**
+	 * Convert version to priority (higher version = lower priority = wins).
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $version Package version.
+	 * @return int Priority value.
+	 */
+	private static function version_to_priority( $version ) {
+		// Extract version parts.
+		$parts = explode( '.', $version );
+		$major = (int) ( $parts[0] ?? 1 );
+		$minor = (int) ( $parts[1] ?? 0 );
+		$patch = (int) ( $parts[2] ?? 0 );
+
+		// Calculate priority: 9999 - (major * 100 + minor * 10 + patch).
+		// v1.0.0 = 9899, v1.1.0 = 9889, v1.2.0 = 9879, v2.0.0 = 9799.
+		return 9999 - ( $major * 100 + $minor * 10 + $patch );
 	}
 
 	/**

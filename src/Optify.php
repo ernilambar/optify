@@ -17,6 +17,15 @@ namespace Nilambar\Optify;
 class Optify {
 
 	/**
+	 * Package version.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const VERSION = '1.0.0';
+
+	/**
 	 * Panel configuration callback.
 	 *
 	 * @since 1.0.0

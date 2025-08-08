@@ -44,6 +44,7 @@
 
 	<rule ref="WordPress-Core">
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment"/>
 	</rule>
 
 	<!-- Enforce short arrays. -->
