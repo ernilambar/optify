@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b16026ea95627a6fec127992d8f7ed91",
+    "content-hash": "0a961c47f12c51baf2378bccfcdabc47",
     "packages": [],
     "packages-dev": [
         {
@@ -244,8 +244,8 @@
                 "php-parallel-lint/php-parallel-lint": "^1.4.0",
                 "phpcsstandards/phpcsdevcs": "^1.1.3",
                 "phpcsstandards/phpcsdevtools": "^1.2.0",
-                "phpunit/phpunit": "^4.8.36 || ^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.3.4 || ^10.1.0",
-                "yoast/phpunit-polyfills": "^1.0.5 || ^2.0.0"
+                "phpunit/phpunit": "^4.8.36 || ^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.3.4 || ^10.5.32 || ^11.3.3",
+                "yoast/phpunit-polyfills": "^1.0.5 || ^2.0 || ^3.0"
             },
             "suggest": {
                 "roave/security-advisories": "dev-master || Helps prevent installing dependencies with known security issues."
@@ -309,7 +309,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2025-07-06T15:59:37+00:00"
+            "time": "2025-08-06T19:48:56+00:00"
         },
         {
             "name": "phpcsstandards/phpcsextra",

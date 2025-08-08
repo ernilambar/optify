@@ -34,7 +34,7 @@ class Validator {
 			// Check if field is required.
 			if ( ! empty( $field['required'] ) && ( null === $field_value || '' === $field_value ) ) {
 				$errors[] = sprintf(
-					__( 'Field "%s" is required.', 'optify' ),
+					esc_html__( 'Field "%s" is required.', 'optify' ),
 					$field['label']
 				);
 				continue;
@@ -77,7 +77,7 @@ class Validator {
 					return new \WP_Error(
 						'invalid_email',
 						sprintf(
-							__( 'Invalid email address for field "%s".', 'optify' ),
+							esc_html__( 'Invalid email address for field "%s".', 'optify' ),
 							$field['label']
 						)
 					);
@@ -89,7 +89,7 @@ class Validator {
 					return new \WP_Error(
 						'invalid_url',
 						sprintf(
-							__( 'Invalid URL for field "%s".', 'optify' ),
+							esc_html__( 'Invalid URL for field "%s".', 'optify' ),
 							$field['label']
 						)
 					);
@@ -101,7 +101,7 @@ class Validator {
 					return new \WP_Error(
 						'invalid_number',
 						sprintf(
-							__( 'Valid number is required for field "%s".', 'optify' ),
+							esc_html__( 'Valid number is required for field "%s".', 'optify' ),
 							$field['label']
 						)
 					);
@@ -114,7 +114,7 @@ class Validator {
 						return new \WP_Error(
 							'invalid_number_choice',
 							sprintf(
-								__( 'Invalid value for field "%s".', 'optify' ),
+								esc_html__( 'Invalid value for field "%s".', 'optify' ),
 								$field['label']
 							)
 						);
@@ -128,7 +128,7 @@ class Validator {
 					return new \WP_Error(
 						'invalid_password',
 						sprintf(
-							__( 'Password is required for field "%s".', 'optify' ),
+							esc_html__( 'Password is required for field "%s".', 'optify' ),
 							$field['label']
 						)
 					);
@@ -140,7 +140,7 @@ class Validator {
 					return new \WP_Error(
 						'invalid_checkbox',
 						sprintf(
-							__( 'Invalid value for field "%s".', 'optify' ),
+							esc_html__( 'Invalid value for field "%s".', 'optify' ),
 							$field['label']
 						)
 					);
@@ -155,7 +155,7 @@ class Validator {
 					return new \WP_Error(
 						'invalid_choice',
 						sprintf(
-							__( 'Invalid value for field "%s".', 'optify' ),
+							esc_html__( 'Invalid value for field "%s".', 'optify' ),
 							$field['label']
 						)
 					);
@@ -176,7 +176,7 @@ class Validator {
 					return new \WP_Error(
 						'invalid_multicheck_type',
 						sprintf(
-							__( 'Field "%s" must be an array. Received %s.', 'optify' ),
+							esc_html__( 'Field "%1$s" must be an array. Received %2$s.', 'optify' ),
 							$field['label'],
 							gettype( $value )
 						)
@@ -194,7 +194,7 @@ class Validator {
 						return new \WP_Error(
 							'invalid_multicheck_choice',
 							sprintf(
-								__( 'Invalid value "%s" for field "%s". Value must be one of the available choices.', 'optify' ),
+								esc_html__( 'Invalid value "%1$s" for field "%2$s". Value must be one of the available choices.', 'optify' ),
 								$v,
 								$field['label']
 							)
@@ -213,7 +213,7 @@ class Validator {
 					return new \WP_Error(
 						'invalid_sortable',
 						sprintf(
-							__( 'Invalid value for field "%s". Sortable field must be an array.', 'optify' ),
+							esc_html__( 'Invalid value for field "%s". Sortable field must be an array.', 'optify' ),
 							$field['label']
 						)
 					);
@@ -223,7 +223,7 @@ class Validator {
 						return new \WP_Error(
 							'invalid_sortable_choice',
 							sprintf(
-								__( 'Invalid value "%s" for field "%s". Value must be one of the available choices.', 'optify' ),
+								esc_html__( 'Invalid value "%1$s" for field "%2$s". Value must be one of the available choices.', 'optify' ),
 								$v,
 								$field['label']
 							)
@@ -268,7 +268,7 @@ class Validator {
 
 				if ( $is_empty ) {
 					$errors[] = sprintf(
-						__( 'Field "%s" is required.', 'optify' ),
+						esc_html__( 'Field "%s" is required.', 'optify' ),
 						$field['label']
 					);
 				}

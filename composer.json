@@ -20,7 +20,7 @@
 		"php-parallel-lint/php-parallel-lint": "^1.4",
 		"phpcompatibility/php-compatibility": "dev-develop#9013cd039fe5740953f9fdeebd19d901b80e26f2",
 		"slevomat/coding-standard": "^8",
-		"wp-coding-standards/wpcs": "*"
+		"wp-coding-standards/wpcs": "^3.2"
 	},
 	"minimum-stability": "dev",
 	"prefer-stable": true,

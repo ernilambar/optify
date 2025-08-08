@@ -70,9 +70,9 @@ class Optify_Instance {
 	 * @param string $version REST API version.
 	 */
 	public function __construct( $instance_id, $namespace, $version ) {
-		$this->instance_id = $instance_id;
-		$this->rest_namespace = $namespace;
-		$this->rest_version = $version;
+		$this->instance_id     = $instance_id;
+		$this->rest_namespace  = $namespace;
+		$this->rest_version    = $version;
 		$this->global_var_name = $this->generate_global_var_name( $instance_id );
 
 		// Initialize REST API for this instance.
