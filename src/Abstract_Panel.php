@@ -113,12 +113,12 @@ abstract class Abstract_Panel {
 			'optionsName'    => $this->options_name,
 			'fieldsConfig'   => $fields,
 			'panelTitle'     => $this->panel_title,
-			'saveButtonText' => __( 'Save Options', 'optify' ),
-			'savingText'     => __( 'Saving...', 'optify' ),
-			'loadingText'    => __( 'Loading options...', 'optify' ),
+			'saveButtonText' => esc_html__( 'Save Changes', 'optify' ),
+			'savingText'     => esc_html__( 'Saving...', 'optify' ),
+			'loadingText'    => esc_html__( 'Loading...', 'optify' ),
 			'messages'       => [
-				'saveSuccess' => __( 'Options saved successfully!', 'optify' ),
-				'saveError'   => __( 'Failed to save options.', 'optify' ),
+				'saveSuccess' => esc_html__( 'Settings saved.', 'optify' ),
+				'saveError'   => esc_html__( 'Failed to save settings.', 'optify' ),
 			],
 		];
 	}
