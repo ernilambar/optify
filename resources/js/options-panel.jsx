@@ -418,7 +418,7 @@ const OptionsPanel = ( {
 
 	// Render field based on type
 	const renderField = ( field, value, handleFieldChange ) => {
-		const { name, label, type, choices = [] } = field;
+		const { name, label, type, choices = [], description } = field;
 
 		// Extract all custom properties (anything beyond the core field properties)
 		const customProps = { ...field };
@@ -434,6 +434,14 @@ const OptionsPanel = ( {
 			return customProps[ propName ] !== undefined ? customProps[ propName ] : defaultValue;
 		};
 
+		// Helper function to render field description
+		const renderDescription = () => {
+			if ( ! description ) {
+				return null;
+			}
+			return <div className="optify-field-description">{ description }</div>;
+		};
+
 		switch ( type ) {
 			case 'text':
 				const textSettings = {
@@ -445,6 +453,7 @@ const OptionsPanel = ( {
 				return (
 					<div className="optify-field optify-field-type-text">
 						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<input
 							type="text"
 							value={ value }
@@ -486,6 +495,7 @@ const OptionsPanel = ( {
 				return (
 					<div className="optify-field optify-field-type-email">
 						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<input
 							type="email"
 							value={ value }
@@ -497,8 +507,10 @@ const OptionsPanel = ( {
 			case 'url':
 				return (
 					<div className="optify-field optify-field-type-url">
+						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<TextControl
-							label={ label }
+							label=""
 							type="url"
 							value={ value }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
@@ -524,6 +536,7 @@ const OptionsPanel = ( {
 				return (
 					<div className="optify-field optify-field-type-number">
 						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<input
 							type="number"
 							value={ value }
@@ -559,9 +572,11 @@ const OptionsPanel = ( {
 				);
 			case 'password':
 				return (
-					<div className="optify-field optify-field-type-url">
+					<div className="optify-field optify-field-type-password">
+						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<TextControl
-							label={ label }
+							label=""
 							type="password"
 							value={ value }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
@@ -578,6 +593,7 @@ const OptionsPanel = ( {
 				return (
 					<div className="optify-field optify-field-type-textarea">
 						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<textarea
 							value={ value }
 							readOnly={ textareaSettings.readonly }
@@ -602,6 +618,7 @@ const OptionsPanel = ( {
 				return (
 					<div className="optify-field optify-field-type-radio">
 						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<div className={ radioGroupClass }>
 							{ ( choices || [] ).map( ( choice ) => (
 								<label key={ choice.value } className="optify-field-radio-option">
@@ -623,8 +640,10 @@ const OptionsPanel = ( {
 			case 'checkbox':
 				return (
 					<div className="optify-field optify-field-type-checkbox">
+						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<CheckboxControl
-							label={ label }
+							label=""
 							checked={ value }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
 						/>
@@ -633,8 +652,10 @@ const OptionsPanel = ( {
 			case 'select':
 				return (
 					<div className="optify-field optify-field-type-select">
+						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<SelectControl
-							label={ label }
+							label=""
 							value={ value }
 							options={ choices || [] }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
@@ -644,8 +665,10 @@ const OptionsPanel = ( {
 			case 'toggle':
 				return (
 					<div className="optify-field optify-field-type-toggle">
+						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
 						<ToggleControl
-							label={ label }
+							label=""
 							checked={ !! value }
 							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
 						/>
@@ -690,6 +713,7 @@ const OptionsPanel = ( {
 				return (
 					<div className="optify-field optify-field-type-multi-check">
 						<span className="optify-field-label">{ label }</span>
+						{ renderDescription() }
 						<div className={ multiCheckGroupClass }>
 							{ ( choices || [] ).map( ( choice ) => (
 								<label
@@ -723,6 +747,7 @@ const OptionsPanel = ( {
 				return (
 					<div className="optify-field optify-field-type-buttonset">
 						<span className="optify-field-label">{ label }</span>
+						{ renderDescription() }
 						<ButtonGroup>
 							{ ( choices || [] ).map( ( choice ) => (
 								<Button
@@ -738,18 +763,23 @@ const OptionsPanel = ( {
 				);
 			case 'sortable':
 				return (
-					<SortableField
-						label={ label }
-						value={ Array.isArray( value ) ? value : field.default || [] }
-						choices={ choices || [] }
-						onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
-						settings={ field.settings || {} }
-					/>
+					<div className="optify-field optify-field-type-sortable">
+						<label className="optify-field-label">{ label }</label>
+						{ renderDescription() }
+						<SortableField
+							label=""
+							value={ Array.isArray( value ) ? value : field.default || [] }
+							choices={ choices || [] }
+							onChange={ ( newValue ) => handleFieldChange( name, newValue ) }
+							settings={ field.settings || {} }
+						/>
+					</div>
 				);
 			case 'heading':
 				return (
 					<div className="optify-field optify-field-type-heading">
 						<h3 className="optify-field-heading">{ label }</h3>
+						{ renderDescription() }
 					</div>
 				);
 			case 'message':
@@ -758,6 +788,7 @@ const OptionsPanel = ( {
 					return (
 						<div className="optify-field optify-field-type-message">
 							<div className="optify-field-message">{ label }</div>
+							{ renderDescription() }
 						</div>
 					);
 				}
@@ -766,6 +797,7 @@ const OptionsPanel = ( {
 						<Notice status={ messageStatus } isDismissible={ false }>
 							{ label }
 						</Notice>
+						{ renderDescription() }
 					</div>
 				);
 			default:

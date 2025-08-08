@@ -96,10 +96,11 @@ class MyMainPanel extends \Nilambar\Optify\Abstract_Panel {
                 'default' => '',
             ],
             [
-                'name'    => 'enable_feature',
-                'label'   => 'Enable Feature',
-                'type'    => 'toggle',
-                'default' => false,
+                'name'        => 'enable_feature',
+                'label'       => 'Enable Feature',
+                'type'        => 'toggle',
+                'default'     => false,
+                'description' => 'Turn this on to enable the new feature.',
             ],
         ];
     }
@@ -126,9 +127,25 @@ The system automatically provides these REST endpoints:
 - **GET** `/your-namespace/v1/options/{panel_id}` - Get current options
 - **POST** `/your-namespace/v1/options/{panel_id}` - Save options
 
+## Field Descriptions
+
+All field types support an optional `description` property that provides additional context or help text for users:
+
+```php
+[
+    'name'        => 'site_title',
+    'label'       => 'Site Title',
+    'type'        => 'text',
+    'default'     => '',
+    'description' => 'Enter the title that will appear in browser tabs and bookmarks.',
+],
+```
+
+The description appears between the field label and input, styled in a subtle italic font.
+
 ## Field Types
 
-Supported field types:
+Supported field types (all support optional `description` property):
 
 - `text` - Text input
 - `email` - Email input
