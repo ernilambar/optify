@@ -133,6 +133,7 @@ class Panel_Manager {
 
 		if ( $args['wrapper'] ) {
 			$display = $args['display'];
+
 			$data_attributes = sprintf(
 				'data-display="%s" data-show-title="%s"',
 				esc_attr( $display ),

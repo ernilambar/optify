@@ -63,7 +63,7 @@ class Optify {
 	public static function init( $namespace, $version ) {
 		// Store REST API configuration.
 		self::$rest_namespace = $namespace;
-		self::$rest_version = $version;
+		self::$rest_version   = $version;
 
 		// Initialize REST API routes.
 		self::init_rest_api( $namespace, $version );
@@ -116,6 +116,7 @@ class Optify {
 
 		// Create new instance.
 		$instance = new Optify_Instance( $instance_id, $namespace, $version );
+
 		self::$instances[ $instance_id ] = $instance;
 
 		return $instance;
@@ -296,12 +297,12 @@ class Optify {
 	}
 
 		/**
-	 * Generate panel configurations.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array Panel configurations.
-	 */
+		 * Generate panel configurations.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @return array Panel configurations.
+		 */
 	private static function generate_panel_configs() {
 		// Use custom callback if provided.
 		if ( self::$panel_config_callback && is_callable( self::$panel_config_callback ) ) {
