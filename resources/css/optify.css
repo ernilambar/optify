@@ -160,20 +160,12 @@
 	margin-top: 8px;
 }
 
-.optify-field-radio-group-horizontal,
-.optify-field-multi-check-group-horizontal {
+.optify-field-radio-group--horizontal,
+.optify-field-multi-check-group--horizontal {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 8px;
-	margin-top: 8px;
-}
-
-.optify-field-radio-group-tight,
-.optify-field-multi-check-group-tight {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
 	margin-top: 8px;
 }
 
@@ -272,8 +264,8 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-	.optify-field-radio-group-horizontal,
-	.optify-field-multi-check-group-horizontal {
+	.optify-field-radio-group--horizontal,
+	.optify-field-multi-check-group--horizontal {
 		flex-direction: column;
 		gap: 10px;
 	}

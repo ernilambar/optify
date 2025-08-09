@@ -8,13 +8,10 @@ const RadioField = ( { field, value, onChange } ) => {
 		layout: 'vertical',
 		size: 'medium',
 		style: 'default',
-		spacing: 'normal',
 		...( field.settings || {} ),
 	};
 	const attrs = extractHtmlAttributes( field );
-	const groupClass = `optify-field-radio-group optify-field-radio-group--${ settings.layout }${
-		settings.spacing === 'tight' ? ' optify-field-radio-group--tight' : ''
-	}`;
+	const groupClass = `optify-field-radio-group optify-field-radio-group--${ settings.layout }`;
 
 	return (
 		<FieldWrapper label={ label } description={ description } type="radio">

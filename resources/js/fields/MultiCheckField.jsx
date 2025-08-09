@@ -8,7 +8,6 @@ const MultiCheckField = ( { field, value, onChange } ) => {
 		layout: 'vertical',
 		size: 'medium',
 		style: 'default',
-		spacing: 'normal',
 		...( field.settings || {} ),
 	};
 	const attrs = extractHtmlAttributes( field );
@@ -27,9 +26,7 @@ const MultiCheckField = ( { field, value, onChange } ) => {
 		);
 	}
 
-	const groupClass = `optify-field-multi-check-group optify-field-multi-check-group--${
-		settings.layout
-	}${ settings.spacing === 'tight' ? ' optify-field-multi-check-group--tight' : '' }`;
+	const groupClass = `optify-field-multi-check-group optify-field-multi-check-group--${ settings.layout }`;
 
 	return (
 		<FieldWrapper
