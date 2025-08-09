@@ -16,6 +16,7 @@ import {
 	Modal,
 } from '@wordpress/components';
 import SortableField from './sortable-field';
+import { getFields, getOptions, saveOptions } from './panel-api';
 
 const OptionsPanel = ( {
 	config,
@@ -223,46 +224,15 @@ const OptionsPanel = ( {
 	useEffect( () => {
 		const fetchData = async () => {
 			try {
-				// Use simplified REST API structure (panel ID only)
-				const fieldsEndpoint = `fields/${ panelId }`;
-				const optionsEndpoint = `options/${ panelId }`;
-
-				// Fetch field configuration
-				const fieldsResponse = await fetch( `${ restUrl }${ fieldsEndpoint }`, {
-					headers: {
-						'X-WP-Nonce': nonce,
-						'Content-Type': 'application/json',
-					},
-				} );
-
-				if ( ! fieldsResponse.ok ) {
-					throw new Error( `Failed to fetch fields: ${ fieldsResponse.status }` );
-				}
-
-				const fieldsData = await fieldsResponse.json();
-				const fieldConfig = fieldsData.data || [];
-
+				const fieldConfig = await getFields( restUrl, panelId, nonce );
 				setFields( fieldConfig );
 
-				// Fetch current values
-				const valuesResponse = await fetch( `${ restUrl }${ optionsEndpoint }`, {
-					headers: {
-						'X-WP-Nonce': nonce,
-						'Content-Type': 'application/json',
-					},
-				} );
-
-				if ( ! valuesResponse.ok ) {
-					throw new Error( `Failed to fetch values: ${ valuesResponse.status }` );
-				}
-
-				const valuesData = await valuesResponse.json();
-				const currentValues = valuesData.data || {};
+				const currentValues = await getOptions( restUrl, panelId, nonce );
 
 				// Process values to ensure proper types for multi-check fields
 				const processedValues = {};
 				Object.keys( currentValues ).forEach( ( key ) => {
-					const field = fields.find( ( f ) => f.name === key );
+					const field = fieldConfig.find( ( f ) => f.name === key );
 					let value = currentValues[ key ];
 
 					// Ensure multi-check fields are always arrays
@@ -277,7 +247,7 @@ const OptionsPanel = ( {
 							value = value.filter( ( val ) => validChoices.includes( val ) );
 
 							// Log removed invalid values for debugging
-							const invalidValues = currentValues[ key ].filter(
+							const invalidValues = ( currentValues[ key ] || [] ).filter(
 								( val ) => ! validChoices.includes( val )
 							);
 							if ( invalidValues.length > 0 ) {
@@ -354,29 +324,10 @@ const OptionsPanel = ( {
 	const handleSave = async () => {
 		setIsSaving( true );
 		try {
-			// Use simplified REST API structure (panel ID only)
-			const optionsEndpoint = `options/${ panelId }`;
-
-			const response = await fetch( `${ restUrl }${ optionsEndpoint }`, {
-				method: 'POST',
-				headers: {
-					'X-WP-Nonce': nonce,
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify( { values } ),
-			} );
-
-			const data = await response.json();
-
-			if ( ! response.ok ) {
-				throw new Error( data.message || `Failed to save: ${ response.status }` );
-			}
-
-			// Update original values with saved data
-			const savedValues = data.data?.values || values;
+			const savedValues = await saveOptions( restUrl, panelId, nonce, values );
 			setOriginalValues( savedValues );
 			setValues( savedValues );
-			setHasChanges( false ); // Reset hasChanges after save
+			setHasChanges( false );
 
 			setNotice( {
 				type: 'success',
@@ -390,7 +341,6 @@ const OptionsPanel = ( {
 				message: messages.saveError,
 			} );
 			onError?.( error );
-			// Keep open on error so user can fix and retry
 		} finally {
 			setIsSaving( false );
 		}
