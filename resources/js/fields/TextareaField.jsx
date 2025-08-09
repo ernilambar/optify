@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { TextareaControl } from '@wordpress/components';
 import FieldWrapper from '../components/FieldWrapper';
 import { extractHtmlAttributes } from '../utils/extract-html-attributes';
 
@@ -13,8 +14,10 @@ const TextareaField = ( { field, value, onChange } ) => {
 			const textarea = textareaRef.current;
 			// Reset height to auto to get the correct scrollHeight
 			textarea.style.height = 'auto';
-			// Set height to scrollHeight to fit content
-			textarea.style.height = `${ textarea.scrollHeight }px`;
+			// Set height to scrollHeight to fit content, but maintain minimum height
+			const minHeight = '4.5rem'; // 3 lines minimum
+			const calculatedHeight = `${ textarea.scrollHeight }px`;
+			textarea.style.height = `max(${ calculatedHeight }, ${ minHeight })`;
 		}
 	};
 
@@ -27,12 +30,14 @@ const TextareaField = ( { field, value, onChange } ) => {
 
 	return (
 		<FieldWrapper label={ label } description={ description } type="textarea">
-			<textarea
-				ref={ textareaRef }
+			<TextareaControl
+				label=""
 				value={ value }
-				onChange={ ( e ) => onChange( name, e.target.value ) }
-				className="optify-field-textarea"
+				onChange={ ( newValue ) => onChange( name, newValue ) }
+				rows={ 3 }
+				style={ { minHeight: '4.5rem' } }
 				{ ...attrs }
+				ref={ textareaRef }
 			/>
 		</FieldWrapper>
 	);
