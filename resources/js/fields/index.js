@@ -15,23 +15,21 @@ import HeadingField from './HeadingField';
 import MessageField from './MessageField';
 
 export const fieldRegistry = {
-    text: TextField,
-    email: EmailField,
-    url: UrlField,
-    number: NumberField,
-    password: PasswordField,
-    textarea: TextareaField,
-    radio: RadioField,
-    checkbox: CheckboxField,
-    select: SelectField,
-    toggle: ToggleField,
-    'multi-check': MultiCheckField,
-    buttonset: ButtonsetField,
-    sortable: SortableFieldType,
-    heading: HeadingField,
-    message: MessageField,
+	text: TextField,
+	email: EmailField,
+	url: UrlField,
+	number: NumberField,
+	password: PasswordField,
+	textarea: TextareaField,
+	radio: RadioField,
+	checkbox: CheckboxField,
+	select: SelectField,
+	toggle: ToggleField,
+	'multi-check': MultiCheckField,
+	buttonset: ButtonsetField,
+	sortable: SortableFieldType,
+	heading: HeadingField,
+	message: MessageField,
 };
 
 export default fieldRegistry;
-
-

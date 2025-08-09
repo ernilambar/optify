@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Panel, PanelBody, PanelRow, Button, Notice, Modal } from '@wordpress/components';
-import Icon from './icons/Icon';
+import Icon from './components/Icon';
 import renderField from './field-renderer';
-import { isFieldVisible } from './logic';
-import { getFields, getOptions, saveOptions } from './panel-api';
+import { isFieldVisible } from './utils/logic';
+import { getFields, getOptions, saveOptions } from './utils/panel-api';
 
 const OptionsPanel = ( {
 	config,
