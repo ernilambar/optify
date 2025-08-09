@@ -169,6 +169,14 @@
 	margin-top: 8px;
 }
 
+/* WordPress RadioControl horizontal layout override */
+.optify-field-radio-group--horizontal .components-radio-control__group-wrapper {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
 .optify-field-radio-option,
 .optify-field-multi-check-option {
 	display: flex;
