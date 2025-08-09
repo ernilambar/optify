@@ -247,6 +247,12 @@
 .optify-field-textarea {
 	min-height: 100px;
 	resize: vertical;
+
+	&[readonly] {
+		resize: none;
+		overflow: hidden;
+		transition: height 0.2s ease;
+	}
 }
 
 .optify-actions {
