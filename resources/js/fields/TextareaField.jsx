@@ -35,7 +35,10 @@ const TextareaField = ( { field, value, onChange } ) => {
 				value={ value }
 				onChange={ ( newValue ) => onChange( name, newValue ) }
 				rows={ 3 }
-				style={ { minHeight: '4.5rem' } }
+				style={ {
+					minHeight: '4.5rem',
+					...( attrs.readOnly && { overflow: 'hidden' } ),
+				} }
 				{ ...attrs }
 				ref={ textareaRef }
 			/>
