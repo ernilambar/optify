@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup } from '@wordpress/components';
+import { TextControl, Button, ButtonGroup } from '@wordpress/components';
 import FieldWrapper from '../components/FieldWrapper';
 import { extractHtmlAttributes } from '../utils/extract-html-attributes';
 import { isNumberValueEqual } from '../utils/logic';
@@ -11,11 +11,11 @@ const NumberField = ( { field, value, onChange } ) => {
 
 	return (
 		<FieldWrapper label={ label } description={ description } type="number">
-			<input
+			<TextControl
+				label=""
 				type="number"
 				value={ value }
-				onChange={ ( e ) => onChange( name, e.target.value ) }
-				className="optify-field-input"
+				onChange={ ( newValue ) => onChange( name, newValue ) }
 				{ ...attrs }
 			/>
 			{ hasChoices && (

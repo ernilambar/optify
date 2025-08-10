@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextControl } from '@wordpress/components';
 import FieldWrapper from '../components/FieldWrapper';
 import { extractHtmlAttributes } from '../utils/extract-html-attributes';
 
@@ -7,11 +8,10 @@ const TextField = ( { field, value, onChange } ) => {
 	const attrs = extractHtmlAttributes( field );
 	return (
 		<FieldWrapper label={ label } description={ description } type="text">
-			<input
-				type="text"
+			<TextControl
+				label=""
 				value={ value }
-				onChange={ ( e ) => onChange( name, e.target.value ) }
-				className="optify-field-input"
+				onChange={ ( newValue ) => onChange( name, newValue ) }
 				{ ...attrs }
 			/>
 		</FieldWrapper>

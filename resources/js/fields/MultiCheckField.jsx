@@ -16,16 +16,6 @@ const MultiCheckField = ( { field, value, onChange } ) => {
 	const baseValue = Array.isArray( value ) ? value : field.default || [];
 	const filteredValue = baseValue.filter( ( val ) => validChoices.includes( val ) );
 
-	if ( process.env.NODE_ENV === 'development' ) {
-		// eslint-disable-next-line no-console
-		console.log(
-			`Multi-check field "${ name }" value:`,
-			value,
-			'processed as:',
-			filteredValue
-		);
-	}
-
 	const groupClass = `optify-field-multi-check-group optify-field-multi-check-group--${ settings.layout }`;
 
 	return (
