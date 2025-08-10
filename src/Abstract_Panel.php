@@ -43,6 +43,15 @@ abstract class Abstract_Panel {
 	protected $options_name;
 
 	/**
+	 * Context for this panel.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var \Nilambar\Optify\Context\Context_Interface
+	 */
+	protected $context;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
@@ -50,11 +59,13 @@ abstract class Abstract_Panel {
 	 * @param string $panel_id Panel identifier.
 	 * @param string $panel_title Panel title.
 	 * @param string $options_name Options name.
+	 * @param \Nilambar\Optify\Context\Context_Interface|null $context Context instance.
 	 */
-	public function __construct( $panel_id, $panel_title, $options_name ) {
+	public function __construct( $panel_id, $panel_title, $options_name, $context = null ) {
 		$this->panel_id     = $panel_id;
 		$this->panel_title  = $panel_title;
 		$this->options_name = $options_name;
+		$this->context      = $context ?: \Nilambar\Optify\Context\Context_Manager::get_default_context();
 	}
 
 	/**
@@ -91,6 +102,28 @@ abstract class Abstract_Panel {
 	}
 
 	/**
+	 * Get context.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return \Nilambar\Optify\Context\Context_Interface Context instance.
+	 */
+	public function get_context() {
+		return $this->context;
+	}
+
+	/**
+	 * Get context ID.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Context ID.
+	 */
+	public function get_context_id() {
+		return $this->context->get_context_id();
+	}
+
+	/**
 	 * Get field configuration for this panel.
 	 *
 	 * @since 1.0.0
@@ -113,6 +146,7 @@ abstract class Abstract_Panel {
 			'optionsName'    => $this->options_name,
 			'fieldsConfig'   => $fields,
 			'panelTitle'     => $this->panel_title,
+			'contextId'      => $this->get_context_id(),
 			'saveButtonText' => esc_html__( 'Save Changes', 'optify' ),
 			'savingText'     => esc_html__( 'Saving...', 'optify' ),
 			'loadingText'    => esc_html__( 'Loading...', 'optify' ),

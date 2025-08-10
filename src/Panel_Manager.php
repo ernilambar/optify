@@ -43,6 +43,20 @@ class Panel_Manager {
 	 * @param array  $args Panel arguments.
 	 */
 	public static function register_panel( $panel_id, $panel_class, $args = [] ) {
+		// Handle context creation if specified
+		$context = null;
+		if ( isset( $args['context'] ) && is_string( $args['context'] ) ) {
+			$context_config = isset( $args['context_config'] ) ? $args['context_config'] : [];
+			$context        = \Nilambar\Optify\Context\Context_Manager::get_context( $args['context'], $context_config );
+		} elseif ( isset( $args['context'] ) && $args['context'] instanceof \Nilambar\Optify\Context\Context_Interface ) {
+			$context = $args['context'];
+		}
+
+		// Add context to args if created
+		if ( $context ) {
+			$args['context'] = $context;
+		}
+
 		self::$panels[ $panel_id ] = [
 			'class' => $panel_class,
 			'args'  => $args,

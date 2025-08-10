@@ -41,10 +41,20 @@ const requestJson = async ( url, options = {} ) => {
  * @param {string} restUrl
  * @param {string} panelId
  * @param {string} nonce
+ * @param {string} contextId Optional context ID.
+ * @param {number} postId Optional post ID for meta panels.
  * @returns {Promise<Array>}
  */
-export const getFields = async ( restUrl, panelId, nonce ) => {
-	const url = buildUrl( restUrl, `fields/${ panelId }` );
+export const getFields = async ( restUrl, panelId, nonce, contextId = null, postId = null ) => {
+	let url;
+	if ( contextId === 'meta' ) {
+		url = buildUrl( restUrl, `meta/fields/${ panelId }` );
+	} else if ( contextId ) {
+		url = buildUrl( restUrl, `context/${ contextId }/fields/${ panelId }` );
+	} else {
+		url = buildUrl( restUrl, `fields/${ panelId }` );
+	}
+
 	const data = await requestJson( url, {
 		headers: {
 			'X-WP-Nonce': nonce,
@@ -59,10 +69,30 @@ export const getFields = async ( restUrl, panelId, nonce ) => {
  * @param {string} restUrl
  * @param {string} panelId
  * @param {string} nonce
+ * @param {string} contextId Optional context ID.
+ * @param {number} postId Optional post ID for meta panels.
  * @returns {Promise<Object>}
  */
-export const getOptions = async ( restUrl, panelId, nonce ) => {
-	const url = buildUrl( restUrl, `options/${ panelId }` );
+export const getOptions = async ( restUrl, panelId, nonce, contextId = null, postId = null ) => {
+	let url;
+	if ( contextId === 'meta' ) {
+		url = buildUrl( restUrl, `meta/data/${ panelId }` );
+	} else if ( contextId ) {
+		url = buildUrl( restUrl, `context/${ contextId }/data/${ panelId }` );
+	} else {
+		url = buildUrl( restUrl, `options/${ panelId }` );
+	}
+
+	// Add post_id parameter for meta requests
+	const params = new URLSearchParams();
+	if ( contextId === 'meta' && postId ) {
+		params.append( 'post_id', postId.toString() );
+	}
+
+	if ( params.toString() ) {
+		url += '?' + params.toString();
+	}
+
 	const data = await requestJson( url, {
 		headers: {
 			'X-WP-Nonce': nonce,
@@ -78,10 +108,30 @@ export const getOptions = async ( restUrl, panelId, nonce ) => {
  * @param {string} panelId
  * @param {string} nonce
  * @param {Object} values
+ * @param {string} contextId Optional context ID.
+ * @param {number} postId Optional post ID for meta panels.
  * @returns {Promise<Object>} Saved values
  */
-export const saveOptions = async ( restUrl, panelId, nonce, values ) => {
-	const url = buildUrl( restUrl, `options/${ panelId }` );
+export const saveOptions = async ( restUrl, panelId, nonce, values, contextId = null, postId = null ) => {
+	let url;
+	if ( contextId === 'meta' ) {
+		url = buildUrl( restUrl, `meta/data/${ panelId }` );
+	} else if ( contextId ) {
+		url = buildUrl( restUrl, `context/${ contextId }/data/${ panelId }` );
+	} else {
+		url = buildUrl( restUrl, `options/${ panelId }` );
+	}
+
+	// Add post_id parameter for meta requests
+	const params = new URLSearchParams();
+	if ( contextId === 'meta' && postId ) {
+		params.append( 'post_id', postId.toString() );
+	}
+
+	if ( params.toString() ) {
+		url += '?' + params.toString();
+	}
+
 	const data = await requestJson( url, {
 		method: 'POST',
 		headers: {

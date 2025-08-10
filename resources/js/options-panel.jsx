@@ -14,6 +14,7 @@ const OptionsPanel = ( {
 	onSave,
 	onError,
 	display = 'inline',
+	postId = null,
 } ) => {
 	const [ fields, setFields ] = useState( [] );
 	const [ values, setValues ] = useState( {} );
@@ -26,7 +27,7 @@ const OptionsPanel = ( {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ isToggleAnimating, setIsToggleAnimating ] = useState( false );
 
-	const { panelTitle, saveButtonText, savingText, loadingText, messages } = config;
+	const { panelTitle, saveButtonText, savingText, loadingText, messages, contextId } = config;
 
 	// Get show_title setting from data attribute
 	const [ showTitle, setShowTitle ] = useState( true );
@@ -52,10 +53,10 @@ const OptionsPanel = ( {
 	useEffect( () => {
 		const fetchData = async () => {
 			try {
-				const fieldConfig = await getFields( restUrl, panelId, nonce );
+				const fieldConfig = await getFields( restUrl, panelId, nonce, contextId, postId );
 				setFields( fieldConfig );
 
-				const currentValues = await getOptions( restUrl, panelId, nonce );
+				const currentValues = await getOptions( restUrl, panelId, nonce, contextId, postId );
 
 				// Process values to ensure proper types for multi-check fields
 				const processedValues = {};
@@ -106,7 +107,7 @@ const OptionsPanel = ( {
 		};
 
 		fetchData();
-	}, [ restUrl, nonce, messages.loadError, onError, panelId ] );
+	}, [ restUrl, nonce, messages.loadError, onError, panelId, contextId, postId ] );
 
 	const handleFieldChange = ( fieldName, value ) => {
 		// Find the field configuration to check if it's a multi-check field
@@ -152,7 +153,7 @@ const OptionsPanel = ( {
 	const handleSave = async () => {
 		setIsSaving( true );
 		try {
-			const savedValues = await saveOptions( restUrl, panelId, nonce, values );
+			const savedValues = await saveOptions( restUrl, panelId, nonce, values, contextId, postId );
 			setOriginalValues( savedValues );
 			setValues( savedValues );
 			setHasChanges( false );
