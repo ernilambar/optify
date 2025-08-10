@@ -2,16 +2,13 @@ import React from 'react';
 import { Notice } from '@wordpress/components';
 
 const MessageField = ( { field } ) => {
-	const { label, description } = field;
+	const { label } = field;
 	const status = field.status || 'info';
 
 	if ( status === 'description' ) {
 		return (
 			<div className="optify-field optify-field-type-message">
 				<div className="optify-field-message">{ label }</div>
-				{ description ? (
-					<div className="optify-field-description">{ description }</div>
-				) : null }
 			</div>
 		);
 	}
@@ -21,7 +18,6 @@ const MessageField = ( { field } ) => {
 			<Notice status={ status } isDismissible={ false }>
 				{ label }
 			</Notice>
-			{ description ? <div className="optify-field-description">{ description }</div> : null }
 		</div>
 	);
 };
