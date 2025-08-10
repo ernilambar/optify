@@ -8,6 +8,8 @@
 
 namespace Nilambar\Optify;
 
+use Exception;
+
 /**
  * Panel Manager class for handling panels independently of their location.
  *
@@ -70,7 +72,7 @@ class Panel_Manager {
 			if ( class_exists( $panel_class ) ) {
 				self::$instances[ $panel_id ] = new $panel_class( ...$args );
 			} else {
-				return null;
+				throw new Exception( sprintf( 'Panel class not found: %s', $panel_class ) );
 			}
 		}
 
