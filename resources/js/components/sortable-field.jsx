@@ -232,7 +232,7 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 																onChange={ () =>
 																	toggleItemEnabled( item.id )
 																}
-																label={ __( 'Enable', 'optify' ) }
+																label=""
 																className="optify-sortable-toggle"
 															/>
 														</div>
