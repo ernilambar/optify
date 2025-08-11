@@ -100,7 +100,60 @@
 }
 
 .optify-save-button {
-	margin-top: 20px;
+	transition: all 0.3s ease;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	white-space: nowrap; /* Prevent text wrapping. */
+	min-width: 110px; /* Minimum width for all contexts. */
+
+	& .optify-save-icon {
+		transition: all 0.3s ease;
+		flex-shrink: 0; /* Prevent icon from shrinking. */
+		width: 16px; /* Fixed icon width. */
+		height: 16px; /* Fixed icon height. */
+		visibility: hidden; /* Hide by default. */
+	}
+
+	/* Show icon when it has the specific classes. */
+	& .optify-save-icon--spinning,
+	& .optify-save-icon--success {
+		visibility: visible;
+	}
+
+	/* Disabled state styling for better readability. */
+	&:disabled {
+		opacity: 0.6;
+		color: #1d2327;
+		cursor: not-allowed;
+	}
+}
+
+.optify-save-button--saving {
+	background-color: #007cba;
+	border-color: #007cba;
+	color: #fff;
+
+	& .optify-save-icon--spinning {
+		animation: optify-spin 1s linear infinite;
+	}
+}
+
+.optify-save-button--saved {
+	background-color: #46b450;
+	border-color: #46b450;
+	color: #fff;
+
+	& .optify-save-icon--success {
+		color: #fff;
+	}
+
+	&:hover {
+		background-color: #46b450;
+		border-color: #46b450;
+	}
 }
 
 .optify-notice {
@@ -264,8 +317,37 @@
 }
 
 .optify-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 20px;
+
 	& .components-button {
-		margin-right: 10px;
+		flex-shrink: 0; /* Prevent buttons from shrinking. */
+	}
+
+	& .components-button:disabled {
+		opacity: 0.85 !important;
+		color: #fff !important;
+		cursor: not-allowed !important;
+	}
+
+	/* Ensure save button maintains its styling in multi-button context. */
+	& .optify-save-button {
+		display: inline-flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		gap: 6px !important;
+		flex-shrink: 0 !important;
+	}
+}
+
+@keyframes optify-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
 	}
 }
 
@@ -457,6 +539,14 @@
 		width: 16px;
 		height: 16px;
 	}
+
+	/* Ensure save button positioning in modal. */
+	.optify-save-button {
+		display: inline-flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		gap: 6px !important;
+	}
 }
 
 /* Toggle Panel Styles */
@@ -522,5 +612,13 @@
 		padding-top: 0;
 		padding-bottom: 0;
 		pointer-events: none;
+	}
+
+	/* Ensure save button positioning in toggle. */
+	.optify-save-button {
+		display: inline-flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		gap: 6px !important;
 	}
 }
