@@ -20,6 +20,7 @@ const OptionsPanel = ( {
 	const [ originalValues, setOriginalValues ] = useState( {} );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isSaving, setIsSaving ] = useState( false );
+	const [ isSaved, setIsSaved ] = useState( false );
 	const [ notice, setNotice ] = useState( null );
 	const [ hasChanges, setHasChanges ] = useState( false );
 	const [ isToggleExpanded, setIsToggleExpanded ] = useState( display !== 'toggle' );
@@ -28,7 +29,7 @@ const OptionsPanel = ( {
 
 	const { panelTitle, saveButtonText, savingText, loadingText, messages } = config;
 
-	// Get show_title setting from data attribute
+	// Get show_title setting from data attribute.
 	const [ showTitle, setShowTitle ] = useState( true );
 	useEffect( () => {
 		const panelElement = document.getElementById( `optify-${ panelId }-panel` );
@@ -38,7 +39,7 @@ const OptionsPanel = ( {
 		}
 	}, [ panelId ] );
 
-	// Check if values have changed
+	// Check if values have changed.
 	useEffect( () => {
 		const changed = Object.keys( values ).some( ( key ) => {
 			return values[ key ] !== originalValues[ key ];
@@ -46,9 +47,20 @@ const OptionsPanel = ( {
 		setHasChanges( changed );
 	}, [ values, originalValues ] );
 
-	// (moved condition/comparison helpers to ./logic)
+	// Auto-restore save button state after successful save.
+	useEffect( () => {
+		if ( isSaved ) {
+			const timer = setTimeout( () => {
+				setIsSaved( false );
+			}, 3000 ); // Restore after 3 seconds.
 
-	// Fetch field configuration and current values
+			return () => clearTimeout( timer );
+		}
+	}, [ isSaved ] );
+
+	// (moved condition/comparison helpers to ./logic).
+
+	// Fetch field configuration and current values.
 	useEffect( () => {
 		const fetchData = async () => {
 			try {
@@ -57,24 +69,24 @@ const OptionsPanel = ( {
 
 				const currentValues = await getOptions( restUrl, panelId, nonce );
 
-				// Process values to ensure proper types for multi-check fields
+				// Process values to ensure proper types for multi-check fields.
 				const processedValues = {};
 				Object.keys( currentValues ).forEach( ( key ) => {
 					const field = fieldConfig.find( ( f ) => f.name === key );
 					let value = currentValues[ key ];
 
-					// Ensure multi-check fields are always arrays
+					// Ensure multi-check fields are always arrays.
 					if ( field && field.type === 'multi-check' ) {
 						if ( ! Array.isArray( value ) ) {
 							value = [];
 						} else {
-							// Filter out invalid values that don't exist in available choices
+							// Filter out invalid values that don't exist in available choices.
 							const validChoices = ( field.choices || [] ).map(
 								( choice ) => choice.value
 							);
 							value = value.filter( ( val ) => validChoices.includes( val ) );
 
-							// Log removed invalid values for debugging
+							// Log removed invalid values for debugging.
 							const invalidValues = ( currentValues[ key ] || [] ).filter(
 								( val ) => ! validChoices.includes( val )
 							);
@@ -93,7 +105,7 @@ const OptionsPanel = ( {
 				} );
 
 				setValues( processedValues );
-				setOriginalValues( processedValues ); // Set original values on load
+				setOriginalValues( processedValues ); // Set original values on load.
 			} catch ( error ) {
 				setNotice( {
 					type: 'error',
@@ -109,17 +121,17 @@ const OptionsPanel = ( {
 	}, [ restUrl, nonce, messages.loadError, onError, panelId ] );
 
 	const handleFieldChange = ( fieldName, value ) => {
-		// Find the field configuration to check if it's a multi-check field
+		// Find the field configuration to check if it's a multi-check field.
 		const field = fields.find( ( f ) => f.name === fieldName );
 
-		// Ensure multi-check fields always get array values
+		// Ensure multi-check fields always get array values.
 		let processedValue = value;
 		if ( field && field.type === 'multi-check' ) {
-			// Convert null/undefined/empty string to empty array
+			// Convert null/undefined/empty string to empty array.
 			if ( value === null || value === undefined || value === '' ) {
 				processedValue = [];
 			} else if ( ! Array.isArray( value ) ) {
-				// This should never happen now, but log for debugging
+				// This should never happen now, but log for debugging.
 				console.error(
 					`Multi-check field "${ fieldName }" received non-array value:`,
 					value
@@ -151,66 +163,87 @@ const OptionsPanel = ( {
 
 	const handleSave = async () => {
 		setIsSaving( true );
+		setNotice( null ); // Clear any existing notices.
+
 		try {
 			const savedValues = await saveOptions( restUrl, panelId, nonce, values );
 			setOriginalValues( savedValues );
 			setValues( savedValues );
 			setHasChanges( false );
-
-			setNotice( {
-				type: 'success',
-				message: messages.saveSuccess,
-			} );
+			setIsSaving( false );
+			setIsSaved( true ); // Show saved state.
 
 			onSave?.( savedValues );
 		} catch ( error ) {
+			setIsSaving( false );
 			setNotice( {
 				type: 'error',
 				message: messages.saveError,
 			} );
 			onError?.( error );
-		} finally {
-			setIsSaving( false );
 		}
 	};
 
-	// Handle toggle animation
+	// Handle toggle animation.
 	const handleToggleClick = () => {
 		if ( isToggleAnimating ) {
-			return; // Prevent multiple clicks during animation
+			return; // Prevent multiple clicks during animation.
 		}
 
 		setIsToggleAnimating( true );
 		const newExpandedState = ! isToggleExpanded;
 		setIsToggleExpanded( newExpandedState );
 
-		// Clear notice when closing the panel
+		// Clear notice when closing the panel.
 		if ( ! newExpandedState && notice ) {
 			setNotice( null );
 		}
 
-		// Reset animation state after transition completes
+		// Reset animation state after transition completes.
 		setTimeout( () => {
 			setIsToggleAnimating( false );
-		}, 300 ); // Match CSS transition duration
+		}, 300 ); // Match CSS transition duration.
 	};
 
-	// Field renderer moved to ./field-renderer
+	// Get save button content based on state.
+	const getSaveButtonContent = () => {
+		if ( isSaving ) {
+			return (
+				<>
+					<Icon name="settings" className="optify-save-icon optify-save-icon--spinning" />
+					{ savingText }
+				</>
+			);
+		}
 
-	// Render panel title component
+		if ( isSaved ) {
+			return (
+				<>
+					<Icon name="check" className="optify-save-icon optify-save-icon--success" />
+					{ __( 'Saved', 'optify' ) }
+				</>
+			);
+		}
+
+		return saveButtonText;
+	};
+
+	// Field renderer moved to ./field-renderer.
+
+	// Render panel title component.
 	const renderPanelTitle = () => {
 		if ( ! showTitle ) {
 			return null;
 		}
 
-		// Show title in inline mode
-		// Show title in toggle mode when expanded
-		// Don't show title in modal mode (no title outside form content)
+		// Show title in inline mode.
+		// Show title in toggle mode when expanded.
+		// Don't show title in modal mode (no title outside form content).
 		if ( display === 'modal' ) {
 			return null;
 		}
 
-		// In toggle mode, only show title when expanded
+		// In toggle mode, only show title when expanded.
 		if ( display === 'toggle' && ! isToggleExpanded ) {
 			return null;
 		}
@@ -226,11 +259,11 @@ const OptionsPanel = ( {
 		return <div className="optify-loading">{ loadingText }</div>;
 	}
 
-	// Render modal button if display is modal
+	// Render modal button if display is modal.
 	if ( display === 'modal' ) {
 		return (
 			<div className="optify-options-panel optify-options-panel--modal">
-				{ /* Modal Button */ }
+				{ /* Modal Button. */ }
 				<div className="optify-modal-container">
 					<Button
 						variant="secondary"
@@ -242,14 +275,15 @@ const OptionsPanel = ( {
 					</Button>
 				</div>
 
-				{ /* Modal Content */ }
+				{ /* Modal Content. */ }
 				{ isModalOpen && (
 					<Modal
 						title={ showTitle ? panelTitle : '' }
 						onRequestClose={ () => setIsModalOpen( false ) }
 						className="optify-modal"
 					>
-						{ notice && (
+						{ /* Only show error notices. */ }
+						{ notice && notice.type === 'error' && (
 							<Notice status={ notice.type } onRemove={ () => setNotice( null ) }>
 								{ notice.message }
 							</Notice>
@@ -282,14 +316,16 @@ const OptionsPanel = ( {
 						<div className="optify-actions">
 							<Button
 								variant="primary"
-								isBusy={ isSaving }
+								className={ `optify-save-button ${
+									isSaving ? 'optify-save-button--saving' : ''
+								} ${ isSaved ? 'optify-save-button--saved' : '' }` }
 								onClick={ handleSave }
 								disabled={ isSaving || ! hasChanges }
 							>
-								{ isSaving ? savingText : saveButtonText }
+								{ getSaveButtonContent() }
 							</Button>
 
-							{ /* Manual close button */ }
+							{ /* Manual close button. */ }
 							<Button
 								variant="secondary"
 								onClick={ () => setIsModalOpen( false ) }
@@ -304,11 +340,11 @@ const OptionsPanel = ( {
 		);
 	}
 
-	// Render toggle icon if display is toggle
+	// Render toggle icon if display is toggle.
 	if ( display === 'toggle' ) {
 		return (
 			<div className="optify-options-panel optify-options-panel--toggle">
-				{ /* Toggle Icon */ }
+				{ /* Toggle Icon. */ }
 				<div className="optify-toggle-container">
 					<Button
 						variant="secondary"
@@ -329,14 +365,14 @@ const OptionsPanel = ( {
 					</Button>
 				</div>
 
-				{ /* Expandable Content */ }
+				{ /* Expandable Content. */ }
 				<div
 					className={ `optify-panel-content ${
 						! isToggleExpanded ? 'optify-panel-content--collapsed' : ''
 					}` }
 				>
-					{ /* Notice - only show when panel is expanded */ }
-					{ isToggleExpanded && notice && (
+					{ /* Only show error notices when panel is expanded. */ }
+					{ isToggleExpanded && notice && notice.type === 'error' && (
 						<Notice status={ notice.type } onRemove={ () => setNotice( null ) }>
 							{ notice.message }
 						</Notice>
@@ -368,14 +404,16 @@ const OptionsPanel = ( {
 					<div className="optify-actions">
 						<Button
 							variant="primary"
-							isBusy={ isSaving }
+							className={ `optify-save-button ${
+								isSaving ? 'optify-save-button--saving' : ''
+							} ${ isSaved ? 'optify-save-button--saved' : '' }` }
 							onClick={ handleSave }
 							disabled={ isSaving || ! hasChanges }
 						>
-							{ isSaving ? savingText : saveButtonText }
+							{ getSaveButtonContent() }
 						</Button>
 
-						{ /* Manual close button */ }
+						{ /* Manual close button. */ }
 						<Button
 							variant="secondary"
 							onClick={ handleToggleClick }
@@ -389,10 +427,11 @@ const OptionsPanel = ( {
 		);
 	}
 
-	// Default render (when display is 'inline')
+	// Default render (when display is 'inline').
 	return (
 		<div className="optify-options-panel">
-			{ notice && (
+			{ /* Only show error notices */ }
+			{ notice && notice.type === 'error' && (
 				<Notice status={ notice.type } onRemove={ () => setNotice( null ) }>
 					{ notice.message }
 				</Notice>
@@ -423,11 +462,13 @@ const OptionsPanel = ( {
 			<div className="optify-actions">
 				<Button
 					variant="primary"
-					isBusy={ isSaving }
+					className={ `optify-save-button ${
+						isSaving ? 'optify-save-button--saving' : ''
+					} ${ isSaved ? 'optify-save-button--saved' : '' }` }
 					onClick={ handleSave }
 					disabled={ isSaving || ! hasChanges }
 				>
-					{ isSaving ? savingText : saveButtonText }
+					{ getSaveButtonContent() }
 				</Button>
 			</div>
 		</div>
