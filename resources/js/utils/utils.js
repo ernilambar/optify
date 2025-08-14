@@ -30,7 +30,4 @@ const processChoices = ( choices = [] ) => {
 	} ) );
 };
 
-export default {
-	decodeHtmlEntities,
-	processChoices,
-};
+export { decodeHtmlEntities, processChoices };
