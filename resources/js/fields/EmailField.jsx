@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextControl } from '@wordpress/components';
 import FieldWrapper from '../components/FieldWrapper';
-import { extractHtmlAttributes } from '../utils/extract-html-attributes';
+import { extractHtmlAttributes } from '../utils/utils';
 
 const EmailField = ( { field, value, onChange } ) => {
 	const { name, label, description } = field;

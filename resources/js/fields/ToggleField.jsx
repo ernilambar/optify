@@ -1,7 +1,7 @@
 import React from 'react';
 import { ToggleControl } from '@wordpress/components';
 import FieldWrapper from '../components/FieldWrapper';
-import { extractHtmlAttributes } from '../utils/extract-html-attributes';
+import { extractHtmlAttributes } from '../utils/utils';
 
 const ToggleField = ( { field, value, onChange } ) => {
 	const { name, label, description } = field;

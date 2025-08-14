@@ -3,8 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Panel, PanelBody, PanelRow, Button, Notice, Modal } from '@wordpress/components';
 import Icon from './components/Icon';
 import renderField from './field-renderer';
-import { isFieldVisible } from './utils/logic';
-import { getFields, getOptions, saveOptions } from './utils/panel-api';
+import { isFieldVisible, getFields, getOptions, saveOptions } from './utils/utils';
 
 const OptionsPanel = ( {
 	config,
