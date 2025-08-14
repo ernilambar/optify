@@ -1,4 +1,5 @@
 import React from 'react';
+import { decodeHtmlEntities } from '../utils/utils';
 
 const FieldWrapper = ( {
 	label,
@@ -11,10 +12,19 @@ const FieldWrapper = ( {
 	const LabelTag = labelElement;
 	const baseClass = `optify-field${ type ? ` optify-field-type-${ type }` : '' }`;
 	const finalClassName = [ baseClass, className ].filter( Boolean ).join( ' ' );
+
+	// Decode HTML entities in label and description.
+	const decodedLabel = decodeHtmlEntities( label );
+	const decodedDescription = decodeHtmlEntities( description );
+
 	return (
 		<div className={ finalClassName }>
-			{ label ? <LabelTag className="optify-field-label">{ label }</LabelTag> : null }
-			{ description ? <div className="optify-field-description">{ description }</div> : null }
+			{ decodedLabel ? (
+				<LabelTag className="optify-field-label">{ decodedLabel }</LabelTag>
+			) : null }
+			{ decodedDescription ? (
+				<div className="optify-field-description">{ decodedDescription }</div>
+			) : null }
 			{ children }
 		</div>
 	);
