@@ -3,11 +3,15 @@ import { TextControl, Button, ButtonGroup } from '@wordpress/components';
 import FieldWrapper from '../components/FieldWrapper';
 import { extractHtmlAttributes } from '../utils/extract-html-attributes';
 import { isNumberValueEqual } from '../utils/logic';
+import { processChoices } from '../utils/utils';
 
 const NumberField = ( { field, value, onChange } ) => {
 	const { name, label, choices = [], description } = field;
 	const attrs = extractHtmlAttributes( field );
-	const hasChoices = ( choices || [] ).length > 0;
+
+	// Process choices to decode HTML entities in labels.
+	const processedChoices = processChoices( choices );
+	const hasChoices = ( processedChoices || [] ).length > 0;
 
 	return (
 		<FieldWrapper label={ label } description={ description } type="number">
@@ -22,7 +26,7 @@ const NumberField = ( { field, value, onChange } ) => {
 				<div className="optify-field-quick-select">
 					<span className="optify-field-quick-select-label">Quick select:</span>
 					<ButtonGroup>
-						{ ( choices || [] ).map( ( choice ) => (
+						{ ( processedChoices || [] ).map( ( choice ) => (
 							<Button
 								key={ choice.value }
 								variant={

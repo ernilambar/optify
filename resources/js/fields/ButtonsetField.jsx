@@ -1,9 +1,14 @@
 import React from 'react';
 import { Button, ButtonGroup } from '@wordpress/components';
 import FieldWrapper from '../components/FieldWrapper';
+import { processChoices } from '../utils/utils';
 
 const ButtonsetField = ( { field, value, onChange } ) => {
 	const { name, label, description, choices = [] } = field;
+
+	// Process choices to decode HTML entities in labels.
+	const processedChoices = processChoices( choices );
+
 	return (
 		<FieldWrapper
 			label={ label }
@@ -12,7 +17,7 @@ const ButtonsetField = ( { field, value, onChange } ) => {
 			labelElement="span"
 		>
 			<ButtonGroup>
-				{ ( choices || [] ).map( ( choice ) => (
+				{ ( processedChoices || [] ).map( ( choice ) => (
 					<Button
 						key={ choice.value }
 						variant={ value === choice.value ? 'primary' : 'secondary' }

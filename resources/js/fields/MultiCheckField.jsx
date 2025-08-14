@@ -1,6 +1,7 @@
 import React from 'react';
 import FieldWrapper from '../components/FieldWrapper';
 import { extractHtmlAttributes } from '../utils/extract-html-attributes';
+import { processChoices } from '../utils/utils';
 
 const MultiCheckField = ( { field, value, onChange } ) => {
 	const { name, label, description, choices = [] } = field;
@@ -12,7 +13,10 @@ const MultiCheckField = ( { field, value, onChange } ) => {
 	};
 	const attrs = extractHtmlAttributes( field );
 
-	const validChoices = ( choices || [] ).map( ( choice ) => choice.value );
+	// Process choices to decode HTML entities in labels.
+	const processedChoices = processChoices( choices );
+
+	const validChoices = ( processedChoices || [] ).map( ( choice ) => choice.value );
 	const baseValue = Array.isArray( value ) ? value : field.default || [];
 	const filteredValue = baseValue.filter( ( val ) => validChoices.includes( val ) );
 
@@ -26,7 +30,7 @@ const MultiCheckField = ( { field, value, onChange } ) => {
 			labelElement="span"
 		>
 			<div className={ groupClass }>
-				{ ( choices || [] ).map( ( choice ) => (
+				{ ( processedChoices || [] ).map( ( choice ) => (
 					<label key={ choice.value } className="optify-field-multi-check-option">
 						<input
 							type="checkbox"
