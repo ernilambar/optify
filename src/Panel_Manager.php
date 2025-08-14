@@ -119,8 +119,9 @@ class Panel_Manager {
 	 */
 	public static function render_panel( $panel_id, $args = [], $instance_id = null ) {
 		$panel = self::get_panel( $panel_id );
+
 		if ( ! $panel ) {
-			return;
+			throw new Exception( sprintf( 'Panel does not exist: %s', $panel_id ) );
 		}
 
 		$defaults = [
