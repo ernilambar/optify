@@ -27,6 +27,11 @@ class Sanitizer {
 	public static function sanitize_field( $value, $type ) {
 		switch ( $type ) {
 			case 'text':
+			case 'buttonset':
+			case 'hidden':
+			case 'password':
+			case 'radio':
+			case 'select':
 				return sanitize_text_field( $value );
 
 			case 'textarea':
@@ -39,19 +44,13 @@ class Sanitizer {
 				return esc_url_raw( $value );
 
 			case 'number':
-				return is_numeric( $value ) ? (int) $value : 0;
-			case 'password':
+				return intval( $value );
+
 			case 'checkbox':
 			case 'toggle':
 				return (bool) $value;
 
-			case 'radio':
-			case 'select':
-			case 'buttonset':
-				return sanitize_text_field( $value );
-
 			case 'multi-check':
-				// Convert empty/null values to empty array
 				if ( null === $value || '' === $value ) {
 					return [];
 				}
@@ -59,14 +58,11 @@ class Sanitizer {
 				if ( ! is_array( $value ) ) {
 					return [];
 				}
-				// Sanitize each value and remove duplicates
+
 				$sanitized_values = array_map( 'sanitize_text_field', $value );
 				return array_unique( $sanitized_values );
 
 			case 'sortable':
-				return is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : [];
-
-			case 'array':
 				return is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : [];
 
 			default:
