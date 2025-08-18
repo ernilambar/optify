@@ -71,12 +71,19 @@ const OptionsPanel = ( {
 
 				// Process values to ensure proper types for multi-check fields.
 				const processedValues = {};
-				Object.keys( currentValues ).forEach( ( key ) => {
-					const field = fieldConfig.find( ( f ) => f.name === key );
-					let value = currentValues[ key ];
+
+				// First, set default values for all fields
+				fieldConfig.forEach( ( field ) => {
+					const fieldName = field.name;
+					let value = currentValues[ fieldName ];
+
+					// If no value exists, use the field's default value
+					if ( value === undefined || value === null ) {
+						value = field.default;
+					}
 
 					// Ensure multi-check fields are always arrays.
-					if ( field && field.type === 'multi-check' ) {
+					if ( field.type === 'multi-check' ) {
 						if ( ! Array.isArray( value ) ) {
 							value = [];
 						} else {
@@ -87,12 +94,12 @@ const OptionsPanel = ( {
 							value = value.filter( ( val ) => validChoices.includes( val ) );
 
 							// Log removed invalid values for debugging.
-							const invalidValues = ( currentValues[ key ] || [] ).filter(
+							const invalidValues = ( currentValues[ fieldName ] || [] ).filter(
 								( val ) => ! validChoices.includes( val )
 							);
 							if ( invalidValues.length > 0 ) {
 								console.warn(
-									`Multi-check field "${ key }" had invalid values removed:`,
+									`Multi-check field "${ fieldName }" had invalid values removed:`,
 									invalidValues,
 									'Available choices:',
 									validChoices
@@ -101,7 +108,7 @@ const OptionsPanel = ( {
 						}
 					}
 
-					processedValues[ key ] = value;
+					processedValues[ fieldName ] = value;
 				} );
 
 				setValues( processedValues );
@@ -294,7 +301,9 @@ const OptionsPanel = ( {
 								{ renderPanelTitle() }
 								{ fields.map( ( field ) => {
 									// Check if field should be visible based on conditions
-									if ( ! isFieldVisible( field, values, fields ) ) {
+									const isVisible = isFieldVisible( field, values, fields );
+
+									if ( ! isVisible ) {
 										return null; // Don't render hidden fields
 									}
 
@@ -383,7 +392,9 @@ const OptionsPanel = ( {
 							{ renderPanelTitle() }
 							{ fields.map( ( field ) => {
 								// Check if field should be visible based on conditions
-								if ( ! isFieldVisible( field, values, fields ) ) {
+								const isVisible = isFieldVisible( field, values, fields );
+
+								if ( ! isVisible ) {
 									return null; // Don't render hidden fields
 								}
 

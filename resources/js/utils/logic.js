@@ -37,6 +37,12 @@ export const evaluateCondition = ( condition, values, fields ) => {
 		return true; // No condition means always show
 	}
 
+	// If we don't have fields or values yet, don't evaluate conditions
+	// This prevents conditional fields from being hidden during initial load
+	if ( ! fields || fields.length === 0 || ! values || Object.keys( values ).length === 0 ) {
+		return true;
+	}
+
 	// All conditions in the array must be true (AND logic)
 	return condition.every( ( rule ) => {
 		const { key, compare, value } = rule;
@@ -156,6 +162,12 @@ export const evaluateCondition = ( condition, values, fields ) => {
 export const isFieldVisible = ( field, values, fields ) => {
 	if ( ! field.condition ) {
 		return true; // No condition means always visible
+	}
+
+	// If we don't have fields or values yet, show the field
+	// This prevents conditional fields from being hidden during initial load
+	if ( ! fields || fields.length === 0 || ! values || Object.keys( values ).length === 0 ) {
+		return true;
 	}
 
 	return evaluateCondition( field.condition, values, fields );
