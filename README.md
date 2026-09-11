@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/ernilambar/optify/blob/main/LICENSE)
 [![PHP](https://img.shields.io/badge/PHP-%3E%3D7.4-777bb4.svg)](https://www.php.net/)
-[![WordPress](https://img.shields.io/badge/WordPress-%3E%3D6.0-21759b.svg)](https://wordpress.org/)
+[![WordPress](https://img.shields.io/badge/WordPress-%3E%3D6.6-21759b.svg)](https://wordpress.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/ernilambar/optify/pulls)
 
 A flexible WordPress panel system for React-based options that can be used in any WordPress plugin.
@@ -20,7 +20,7 @@ A flexible WordPress panel system for React-based options that can be used in an
 ## Requirements
 
 - PHP >= 7.4
-- WordPress >= 6.0
+- WordPress >= 6.6
 
 ## Installation
 

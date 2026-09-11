@@ -98,6 +98,7 @@ const OptionsPanel = ( {
 								( val ) => ! validChoices.includes( val )
 							);
 							if ( invalidValues.length > 0 ) {
+								// eslint-disable-next-line no-console
 								console.warn(
 									`Multi-check field "${ fieldName }" had invalid values removed:`,
 									invalidValues,
@@ -139,6 +140,7 @@ const OptionsPanel = ( {
 				processedValue = [];
 			} else if ( ! Array.isArray( value ) ) {
 				// This should never happen now, but log for debugging.
+				// eslint-disable-next-line no-console
 				console.error(
 					`Multi-check field "${ fieldName }" received non-array value:`,
 					value
@@ -152,6 +154,7 @@ const OptionsPanel = ( {
 				// Log removed invalid values for debugging
 				const invalidValues = value.filter( ( val ) => ! validChoices.includes( val ) );
 				if ( invalidValues.length > 0 ) {
+					// eslint-disable-next-line no-console
 					console.warn(
 						`Multi-check field "${ fieldName }" had invalid values removed:`,
 						invalidValues,

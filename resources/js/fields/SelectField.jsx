@@ -1,8 +1,7 @@
 import React from 'react';
 import { SelectControl } from '@wordpress/components';
 import FieldWrapper from '../components/FieldWrapper';
-import { extractHtmlAttributes } from '../utils/utils';
-import { processChoices } from '../utils/utils';
+import { extractHtmlAttributes, processChoices } from '../utils/utils';
 
 const SelectField = ( { field, value, onChange } ) => {
 	const { name, label, description, choices = [] } = field;

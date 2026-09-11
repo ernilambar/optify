@@ -45,7 +45,7 @@ Run each from the repository root.
   match their class names (e.g. `Panel_Manager.php`, `Abstract_Panel.php`).
 - **WordPress standards**: follow WPCS — tabs for indentation, Yoda conditions, snake_case names,
   and short array syntax (`[]`, long arrays are disallowed).
-- **Compatibility floor**: support PHP 7.4+ and WordPress 6.0+; do not introduce newer syntax or
+- **Compatibility floor**: support PHP 7.4+ and WordPress 6.6+; do not introduce newer syntax or
   functions.
 - **Internationalization**: all translatable strings use the `optify` text domain.
 - **Generated assets**: `assets/` is webpack build output (excluded from PHPCS and Prettier, and
