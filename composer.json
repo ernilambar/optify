@@ -1,6 +1,15 @@
 {
 	"name": "ernilambar/optify",
 	"description": "A flexible WordPress panel system for React-based options",
+	"keywords": [
+		"wordpress",
+		"options",
+		"settings",
+		"panel",
+		"react",
+		"rest-api"
+	],
+	"homepage": "https://github.com/ernilambar/optify",
 	"license": "MIT",
 	"type": "library",
 	"authors": [
@@ -11,16 +20,20 @@
 			"role": "Developer"
 		}
 	],
+	"support": {
+		"issues": "https://github.com/ernilambar/optify/issues",
+		"source": "https://github.com/ernilambar/optify"
+	},
 	"require": {
 		"php": ">=7.4"
 	},
 	"require-dev": {
-		"dealerdirect/phpcodesniffer-composer-installer": "^1",
-		"ernilambar/coding-standard": "^1",
-		"php-parallel-lint/php-parallel-lint": "^1.4",
-		"phpcompatibility/php-compatibility": "dev-develop#9013cd039fe5740953f9fdeebd19d901b80e26f2",
-		"slevomat/coding-standard": "^8",
-		"wp-coding-standards/wpcs": "^3.2"
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.2",
+		"ernilambar/coding-standard": "^2.0",
+		"php-parallel-lint/php-parallel-lint": "dev-develop#f8cb90a",
+		"phpcompatibility/php-compatibility": "^10.0",
+		"slevomat/coding-standard": "^8.22",
+		"wp-coding-standards/wpcs": "^3.4"
 	},
 	"minimum-stability": "dev",
 	"prefer-stable": true,
@@ -39,6 +52,11 @@
 			"php": "7.4"
 		},
 		"sort-packages": true
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-main": "1.x-dev"
+		}
 	},
 	"scripts": {
 		"format": "@php ./vendor/bin/phpcbf --report-full --report-summary",
