@@ -1,5 +1,10 @@
 # Optify - WordPress Panel System
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/ernilambar/optify/blob/main/LICENSE)
+[![PHP](https://img.shields.io/badge/PHP-%3E%3D7.4-777bb4.svg)](https://www.php.net/)
+[![WordPress](https://img.shields.io/badge/WordPress-%3E%3D6.0-21759b.svg)](https://wordpress.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/ernilambar/optify/pulls)
+
 A flexible WordPress panel system for React-based options that can be used in any WordPress plugin.
 
 ## Features
@@ -11,6 +16,116 @@ A flexible WordPress panel system for React-based options that can be used in an
 - **Flexible Rendering**: Render panels in admin pages, dashboard widgets, metaboxes, etc.
 - **Simplified API**: Single `Panel_Manager::render_panel()` method for all rendering contexts
 - **Unique CSS Classes**: Each panel gets a unique CSS class for easy styling (`optify-panel-{panel_id}`)
+
+## Requirements
+
+- PHP >= 7.4
+- WordPress >= 6.0
+
+## Installation
+
+Optify is distributed via GitHub only (it is not published on Packagist). Register the repository
+in your plugin's `composer.json` and then require the package:
+
+```json
+{
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/ernilambar/optify"
+		}
+	]
+}
+```
+
+```bash
+composer require ernilambar/optify:^1.0
+```
+
+## Basic Usage
+
+### 1. Initialize the Panel System
+
+```php
+use Nilambar\Optify\Optify;
+
+// Initialize the panel system (REST API only)
+Optify::init( 'your-namespace', 'v1' );
+
+// Load assets (required for frontend functionality)
+Optify::load_assets(
+    plugin_dir_path( __FILE__ ) . 'vendor/ernilambar/optify',
+    plugin_dir_url( __FILE__ ) . 'vendor/ernilambar/optify/'
+);
+```
+
+### 2. Load Assets with Custom Configuration
+
+If you need custom asset paths:
+
+```php
+// Load assets with custom paths
+Optify::load_assets(
+    '/custom/path/to/optify',
+    'https://your-site.com/custom/optify/'
+);
+```
+
+**Asset Configuration:**
+- `package_dir`: Package directory path (required)
+- `package_url`: Package URL (required)
+- Asset files are auto-detected from the package directory
+
+### 3. Create Panel Classes
+
+```php
+<?php
+namespace YourPlugin\Panels;
+
+use Nilambar\Optify\Abstract_Panel;
+
+class MainPanel extends Abstract_Panel {
+    public function __construct() {
+        parent::__construct(
+            'main',
+            __( 'General Settings', 'your-plugin' ),
+            'your_plugin_options'
+        );
+    }
+
+    public function get_field_configuration() {
+        return [
+            [
+                'name'    => 'site_title',
+                'label'   => __( 'Site Title', 'your-plugin' ),
+                'type'    => 'text',
+                'default' => '',
+            ],
+            // ... more fields
+        ];
+    }
+}
+```
+
+### 4. Register Panels
+
+```php
+// Register panels
+Optify::register_panel( 'main', MainPanel::class );
+Optify::register_panel( 'advanced', AdvancedPanel::class );
+```
+
+### 5. Render Panels
+
+```php
+use Nilambar\Optify\Panel_Manager;
+
+// Render in admin page
+Panel_Manager::render_panel( 'main', [
+    'container_class' => 'optify-panel-admin',
+    'show_title'      => false,
+] );
+```
 
 ## Complete Example
 
@@ -107,42 +222,6 @@ class MyMainPanel extends \Nilambar\Optify\Abstract_Panel {
 }
 ```
 
-### 5. Render Panels
-
-```php
-use Nilambar\Optify\Panel_Manager;
-
-// Render in admin page
-Panel_Manager::render_panel( 'main', [
-    'container_class' => 'optify-panel-admin',
-    'show_title'      => false,
-] );
-```
-
-## REST API Endpoints
-
-The system automatically provides these REST endpoints:
-
-- **GET** `/your-namespace/v1/fields/{panel_id}` - Get field configuration
-- **GET** `/your-namespace/v1/options/{panel_id}` - Get current options
-- **POST** `/your-namespace/v1/options/{panel_id}` - Save options
-
-## Field Descriptions
-
-All field types support an optional `description` property that provides additional context or help text for users:
-
-```php
-[
-    'name'        => 'site_title',
-    'label'       => 'Site Title',
-    'type'        => 'text',
-    'default'     => '',
-    'description' => 'Enter the title that will appear in browser tabs and bookmarks.',
-],
-```
-
-The description appears between the field label and input, styled in a subtle italic font.
-
 ## Field Types
 
 Supported field types (all support optional `description` property):
@@ -163,86 +242,30 @@ Supported field types (all support optional `description` property):
 - `heading` - Display-only heading text
 - `message` - Message with status (info, success, warning, error, description)
 
+## Field Descriptions
+
+All field types support an optional `description` property that provides additional context or help text for users:
+
+```php
+[
+    'name'        => 'site_title',
+    'label'       => 'Site Title',
+    'type'        => 'text',
+    'default'     => '',
+    'description' => 'Enter the title that will appear in browser tabs and bookmarks.',
+],
+```
+
+The description appears between the field label and input, styled in a subtle italic font.
+
+## REST API Endpoints
+
+The system automatically provides these REST endpoints:
+
+- **GET** `/your-namespace/v1/fields/{panel_id}` - Get field configuration
+- **GET** `/your-namespace/v1/options/{panel_id}` - Get current options
+- **POST** `/your-namespace/v1/options/{panel_id}` - Save options
 
 ## License
 
-MIT
-
-## Installation
-
-```bash
-composer require ernilambar/optify
-```
-
-## Basic Usage
-
-### 1. Initialize the Panel System
-
-```php
-use Nilambar\Optify\Optify;
-
-// Initialize the panel system (REST API only)
-Optify::init( 'your-namespace', 'v1' );
-
-// Load assets (required for frontend functionality)
-Optify::load_assets(
-    plugin_dir_path( __FILE__ ) . 'vendor/ernilambar/optify',
-    plugin_dir_url( __FILE__ ) . 'vendor/ernilambar/optify/'
-);
-```
-
-### 2. Load Assets with Custom Configuration
-
-If you need custom asset paths:
-
-```php
-// Load assets with custom paths
-Optify::load_assets(
-    '/custom/path/to/optify',
-    'https://your-site.com/custom/optify/'
-);
-```
-
-**Asset Configuration:**
-- `package_dir`: Package directory path (required)
-- `package_url`: Package URL (required)
-- Asset files are auto-detected from the package directory
-
-### 3. Create Panel Classes
-
-```php
-<?php
-namespace YourPlugin\Panels;
-
-use Nilambar\Optify\Abstract_Panel;
-
-class MainPanel extends Abstract_Panel {
-    public function __construct() {
-        parent::__construct(
-            'main',
-            __( 'General Settings', 'your-plugin' ),
-            'your_plugin_options'
-        );
-    }
-
-    public function get_field_configuration() {
-        return [
-            [
-                'name'    => 'site_title',
-                'label'   => __( 'Site Title', 'your-plugin' ),
-                'type'    => 'text',
-                'default' => '',
-            ],
-            // ... more fields
-        ];
-    }
-}
-```
-
-### 4. Register Panels
-
-```php
-// Register panels
-Optify::register_panel( 'main', MainPanel::class );
-Optify::register_panel( 'advanced', AdvancedPanel::class );
-```
+[MIT](LICENSE) © 2026 [Nilambar Sharma](https://www.nilambar.net)

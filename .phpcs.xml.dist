@@ -32,6 +32,9 @@
 	<!-- Minimum support WP Version. -->
 	<config name="minimum_wp_version" value="6.0"/>
 
+	<!-- PHP version check. -->
+	<config name="testVersion" value="7.4-"/>
+
 	<!-- Don't worry about files that don't contain any code -->
 	<rule ref="Internal.NoCodeFound">
 		<severity>0</severity>
@@ -44,7 +47,6 @@
 
 	<rule ref="WordPress-Core">
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
-		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment"/>
 	</rule>
 
 	<!-- Enforce short arrays. -->
@@ -85,7 +87,4 @@
 		<exclude name="PHPCompatibility.FunctionUse.NewFunctions.str_starts_withFound"/>
 		<exclude name="PHPCompatibility.FunctionUse.NewFunctions.str_ends_withFound"/>
 	</rule>
-
-	<!-- PHP version check. -->
-	<config name="testVersion" value="7.2-"/>
 </ruleset>
