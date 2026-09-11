@@ -13,7 +13,6 @@
 }
 
 @keyframes optify-slide-down {
-
 	from {
 		opacity: 0;
 		transform: translateY(-10px);
@@ -80,7 +79,6 @@
 }
 
 .optify-field-type-number {
-
 	.optify-field-quick-select {
 		margin-top: 10px;
 	}
@@ -165,7 +163,6 @@
 
 /* WordPress Components Integration */
 .optify-options-panel {
-
 	.components-panel {
 		margin-bottom: 20px;
 	}
@@ -255,7 +252,6 @@
 }
 
 .optify-field-type-radio {
-
 	.optify-field-radio-option {
 		display: flex;
 		gap: 5px;
@@ -264,7 +260,6 @@
 
 /* Number field with quick select */
 .optify-field-number {
-
 	.optify-quick-select {
 		margin-top: 8px;
 		display: flex;
@@ -349,7 +344,6 @@
 }
 
 @keyframes optify-spin {
-
 	from {
 		transform: rotate(0deg);
 	}
@@ -368,7 +362,6 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-
 	.optify-field-radio-group--horizontal,
 	.optify-field-multi-check-group--horizontal {
 		flex-direction: column;
@@ -378,7 +371,6 @@
 
 /* Sortable Field Styles */
 .optify-field-type-sortable {
-
 	.optify-sortable-container {
 		margin-top: 8px;
 	}
@@ -462,7 +454,6 @@
 	}
 
 	.optify-sortable-toggle {
-
 		.components-form-toggle {
 			margin: 0;
 		}
@@ -496,7 +487,6 @@
 
 	/* Drag state styles */
 	.optify-sortable-item[data-rbd-draggable-context-id] {
-
 		&[data-rbd-dragging="true"] {
 			background: #f0f0f0;
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -506,7 +496,6 @@
 
 	/* Drop zone styles */
 	.optify-sortable-list[data-rbd-droppable-context-id] {
-
 		&[data-rbd-dropping="true"] {
 			background: #f9f9f9;
 			border-color: #007cba;
@@ -516,7 +505,6 @@
 
 /* Modal Panel Styles */
 .optify-options-panel--modal {
-
 	.optify-modal-container {
 		margin-bottom: 10px;
 	}
@@ -565,7 +553,6 @@
 
 /* Toggle Panel Styles */
 .optify-options-panel--toggle {
-
 	.optify-toggle-container {
 		margin-bottom: 10px;
 	}
