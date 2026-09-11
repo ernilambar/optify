@@ -1,7 +1,7 @@
 .optify-panel {
 	margin: 10px 0;
 
-	& h2 {
+	h2 {
 		margin-top: 0;
 		color: #23282d;
 	}
@@ -13,10 +13,12 @@
 }
 
 @keyframes optify-slide-down {
+
 	from {
 		opacity: 0;
 		transform: translateY(-10px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0);
@@ -28,12 +30,12 @@
 	width: 100%;
 	max-width: 600px;
 
-	& input[type="text"],
-	& input[type="email"],
-	& input[type="url"],
-	& input[type="number"],
-	& textarea,
-	& select {
+	input[type="text"],
+	input[type="email"],
+	input[type="url"],
+	input[type="number"],
+	textarea,
+	select {
 		width: 100%;
 		max-width: 600px;
 		border-radius: 2px;
@@ -78,6 +80,7 @@
 }
 
 .optify-field-type-number {
+
 	.optify-field-quick-select {
 		margin-top: 10px;
 	}
@@ -109,7 +112,7 @@
 	white-space: nowrap; /* Prevent text wrapping. */
 	min-width: 110px; /* Minimum width for all contexts. */
 
-	& .optify-save-icon {
+	.optify-save-icon {
 		transition: all 0.3s ease;
 		flex-shrink: 0; /* Prevent icon from shrinking. */
 		width: 16px; /* Fixed icon width. */
@@ -118,8 +121,8 @@
 	}
 
 	/* Show icon when it has the specific classes. */
-	& .optify-save-icon--spinning,
-	& .optify-save-icon--success {
+	.optify-save-icon--spinning,
+	.optify-save-icon--success {
 		visibility: visible;
 	}
 
@@ -136,7 +139,7 @@
 	border-color: #007cba;
 	color: #fff;
 
-	& .optify-save-icon--spinning {
+	.optify-save-icon--spinning {
 		animation: optify-spin 1s linear infinite;
 	}
 }
@@ -146,7 +149,7 @@
 	border-color: #46b450;
 	color: #fff;
 
-	& .optify-save-icon--success {
+	.optify-save-icon--success {
 		color: #fff;
 	}
 
@@ -162,19 +165,20 @@
 
 /* WordPress Components Integration */
 .optify-options-panel {
-	& .components-panel {
+
+	.components-panel {
 		margin-bottom: 20px;
 	}
 
-	& .components-panel__body {
+	.components-panel__body {
 		padding: 20px;
 	}
 
-	& .components-panel__row {
+	.components-panel__row {
 		margin-bottom: 15px;
 	}
 
-	& .components-base-control {
+	.components-base-control {
 		margin-bottom: 16px;
 		width: 100%;
 
@@ -241,8 +245,8 @@
 	padding: 6px 0;
 	line-height: 1.4;
 
-	& input[type="radio"],
-	& input[type="checkbox"] {
+	input[type="radio"],
+	input[type="checkbox"] {
 		margin: 0;
 		flex-shrink: 0;
 		width: 16px;
@@ -251,6 +255,7 @@
 }
 
 .optify-field-type-radio {
+
 	.optify-field-radio-option {
 		display: flex;
 		gap: 5px;
@@ -259,14 +264,15 @@
 
 /* Number field with quick select */
 .optify-field-number {
-	& .optify-quick-select {
+
+	.optify-quick-select {
 		margin-top: 8px;
 		display: flex;
 		gap: 8px;
 		flex-wrap: wrap;
 	}
 
-	& .optify-quick-select-button {
+	.optify-quick-select-button {
 		padding: 4px 8px;
 		font-size: 12px;
 		border: 1px solid #8c8f94;
@@ -322,18 +328,18 @@
 	gap: 10px;
 	margin-top: 20px;
 
-	& .components-button {
+	.components-button {
 		flex-shrink: 0; /* Prevent buttons from shrinking. */
 	}
 
-	& .components-button:disabled {
+	.components-button:disabled {
 		opacity: 0.85 !important;
 		color: #fff !important;
 		cursor: not-allowed !important;
 	}
 
 	/* Ensure save button maintains its styling in multi-button context. */
-	& .optify-save-button {
+	.optify-save-button {
 		display: inline-flex !important;
 		align-items: center !important;
 		justify-content: center !important;
@@ -343,9 +349,11 @@
 }
 
 @keyframes optify-spin {
+
 	from {
 		transform: rotate(0deg);
 	}
+
 	to {
 		transform: rotate(360deg);
 	}
@@ -360,6 +368,7 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+
 	.optify-field-radio-group--horizontal,
 	.optify-field-multi-check-group--horizontal {
 		flex-direction: column;
@@ -369,6 +378,7 @@
 
 /* Sortable Field Styles */
 .optify-field-type-sortable {
+
 	.optify-sortable-container {
 		margin-top: 8px;
 	}
@@ -452,6 +462,7 @@
 	}
 
 	.optify-sortable-toggle {
+
 		.components-form-toggle {
 			margin: 0;
 		}
@@ -485,6 +496,7 @@
 
 	/* Drag state styles */
 	.optify-sortable-item[data-rbd-draggable-context-id] {
+
 		&[data-rbd-dragging="true"] {
 			background: #f0f0f0;
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -494,6 +506,7 @@
 
 	/* Drop zone styles */
 	.optify-sortable-list[data-rbd-droppable-context-id] {
+
 		&[data-rbd-dropping="true"] {
 			background: #f9f9f9;
 			border-color: #007cba;
@@ -503,6 +516,7 @@
 
 /* Modal Panel Styles */
 .optify-options-panel--modal {
+
 	.optify-modal-container {
 		margin-bottom: 10px;
 	}
@@ -551,6 +565,7 @@
 
 /* Toggle Panel Styles */
 .optify-options-panel--toggle {
+
 	.optify-toggle-container {
 		margin-bottom: 10px;
 	}

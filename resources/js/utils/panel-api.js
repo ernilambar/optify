@@ -4,7 +4,7 @@
  * Build full endpoint URL.
  * @param {string} restUrl
  * @param {string} path
- * @returns {string}
+ * @return {string} Full endpoint URL.
  */
 const buildUrl = ( restUrl, path ) => {
 	const base = restUrl.endsWith( '/' ) ? restUrl : `${ restUrl }/`;
@@ -14,15 +14,15 @@ const buildUrl = ( restUrl, path ) => {
 /**
  * Perform a JSON request with WP nonce headers.
  * @param {string} url
- * @param {object} options
- * @returns {Promise<any>}
+ * @param {Object} options
+ * @return {Promise<any>} Parsed response data.
  */
 const requestJson = async ( url, options = {} ) => {
 	const response = await fetch( url, options );
 	let data;
 	try {
 		data = await response.json();
-	} catch ( e ) {
+	} catch {
 		// Fallback when no JSON body.
 		data = null;
 	}
@@ -41,7 +41,7 @@ const requestJson = async ( url, options = {} ) => {
  * @param {string} restUrl
  * @param {string} panelId
  * @param {string} nonce
- * @returns {Promise<Array>}
+ * @return {Promise<Array>} Field configuration.
  */
 export const getFields = async ( restUrl, panelId, nonce ) => {
 	const url = buildUrl( restUrl, `fields/${ panelId }` );
@@ -59,7 +59,7 @@ export const getFields = async ( restUrl, panelId, nonce ) => {
  * @param {string} restUrl
  * @param {string} panelId
  * @param {string} nonce
- * @returns {Promise<Object>}
+ * @return {Promise<Object>} Current option values.
  */
 export const getOptions = async ( restUrl, panelId, nonce ) => {
 	const url = buildUrl( restUrl, `options/${ panelId }` );
@@ -78,7 +78,7 @@ export const getOptions = async ( restUrl, panelId, nonce ) => {
  * @param {string} panelId
  * @param {string} nonce
  * @param {Object} values
- * @returns {Promise<Object>} Saved values
+ * @return {Promise<Object>} Saved values
  */
 export const saveOptions = async ( restUrl, panelId, nonce, values ) => {
 	const url = buildUrl( restUrl, `options/${ panelId }` );

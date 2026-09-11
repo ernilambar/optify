@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { __ } from '@wordpress/i18n';
-import { Button, ToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const SortableField = ( { label, value = [], choices = [], onChange, settings = {} } ) => {
@@ -9,12 +9,7 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 	const lastValueRef = useRef( value );
 
 	// Extract settings with defaults (handle both snake_case and camelCase)
-	const showToggles =
-		settings.show_toggles !== undefined
-			? settings.show_toggles
-			: settings.showToggles !== undefined
-			? settings.showToggles
-			: true;
+	const showToggles = settings.show_toggles ?? settings.showToggles ?? true;
 
 	// Initialize items from choices and current value
 	useEffect( () => {
@@ -22,11 +17,8 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 		const itemsWithState = choices.map( ( choice ) => ( {
 			id: choice.value,
 			label: choice.label,
-			enabled: showToggles
-				? Array.isArray( value )
-					? value.includes( choice.value )
-					: false
-				: true, // All items enabled when toggles are disabled
+			// All items enabled when toggles are disabled.
+			enabled: ! showToggles || ( Array.isArray( value ) && value.includes( choice.value ) ),
 		} ) );
 
 		// Reorder items based on saved value order
@@ -36,7 +28,9 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 			// With toggles: First, add enabled items in the order they appear in the saved value
 			if ( Array.isArray( value ) ) {
 				value.forEach( ( savedValue ) => {
-					const item = itemsWithState.find( ( item ) => item.id === savedValue );
+					const item = itemsWithState.find(
+						( candidate ) => candidate.id === savedValue
+					);
 					if ( item ) {
 						reorderedItems.push( item );
 					}
@@ -49,27 +43,24 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 					reorderedItems.push( item );
 				}
 			} );
-		} else {
-			// Without toggles: Use saved order or default to choice order
-			if ( Array.isArray( value ) && value.length > 0 ) {
-				// Use saved order
-				value.forEach( ( savedValue ) => {
-					const item = itemsWithState.find( ( item ) => item.id === savedValue );
-					if ( item ) {
-						reorderedItems.push( item );
-					}
-				} );
+		} else if ( Array.isArray( value ) && value.length > 0 ) {
+			// Without toggles: Use saved order
+			value.forEach( ( savedValue ) => {
+				const item = itemsWithState.find( ( candidate ) => candidate.id === savedValue );
+				if ( item ) {
+					reorderedItems.push( item );
+				}
+			} );
 
-				// Add any remaining items that weren't in the saved value
-				itemsWithState.forEach( ( item ) => {
-					if ( ! value.includes( item.id ) ) {
-						reorderedItems.push( item );
-					}
-				} );
-			} else {
-				// No saved values, use original choice order
-				reorderedItems.push( ...itemsWithState );
-			}
+			// Add any remaining items that weren't in the saved value
+			itemsWithState.forEach( ( item ) => {
+				if ( ! value.includes( item.id ) ) {
+					reorderedItems.push( item );
+				}
+			} );
+		} else {
+			// No saved values, use original choice order
+			reorderedItems.push( ...itemsWithState );
 		}
 
 		setItems( reorderedItems );
@@ -87,7 +78,7 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 				// First, add enabled items in the order they appear in the new value
 				if ( Array.isArray( value ) ) {
 					value.forEach( ( savedValue ) => {
-						const item = items.find( ( item ) => item.id === savedValue );
+						const item = items.find( ( candidate ) => candidate.id === savedValue );
 						if ( item ) {
 							reorderedItems.push( {
 								...item,
@@ -111,6 +102,9 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 				lastValueRef.current = value;
 			}
 		}
+		// Depend on items.length rather than items: internal drag reorders must not
+		// re-trigger this sync, which would revert them against the stale value prop.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ value, items.length ] );
 
 	// Handle pending updates after render
@@ -191,7 +185,7 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 
 	return (
 		<div className="optify-field optify-field-type-sortable">
-			{ label && <label className="optify-field-label">{ label }</label> }
+			{ label && <span className="optify-field-label">{ label }</span> }
 			<div className="optify-sortable-container">
 				<DragDropContext onDragEnd={ handleDragEnd }>
 					<Droppable droppableId="sortable-list">
@@ -208,14 +202,14 @@ const SortableField = ( { label, value = [], choices = [], onChange, settings = 
 										draggableId={ item.id }
 										index={ index }
 									>
-										{ ( provided, snapshot ) => (
+										{ ( draggableProvided, draggableSnapshot ) => (
 											<div
-												ref={ provided.innerRef }
-												{ ...provided.draggableProps }
-												{ ...provided.dragHandleProps }
+												ref={ draggableProvided.innerRef }
+												{ ...draggableProvided.draggableProps }
+												{ ...draggableProvided.dragHandleProps }
 												style={ getItemStyle(
-													snapshot.isDragging,
-													provided.draggableProps.style
+													draggableSnapshot.isDragging,
+													draggableProvided.draggableProps.style
 												) }
 												className={ `optify-sortable-item ${
 													item.enabled ? 'enabled' : 'disabled'

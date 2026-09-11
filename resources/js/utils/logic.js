@@ -1,6 +1,6 @@
 // Minimal logic utilities extracted from options panel.
 
-export const validateComparisonForFieldType = ( fieldType, compare, value ) => {
+export const validateComparisonForFieldType = ( fieldType, compare ) => {
 	// For fields with fixed options (radio, select, checkbox, toggle, multi-check, sortable)
 	const fixedOptionFields = [
 		'radio',
@@ -63,8 +63,9 @@ export const evaluateCondition = ( condition, values, fields ) => {
 		const fieldType = targetField?.type;
 
 		// Validate comparison operators based on field type
-		const isValidComparison = validateComparisonForFieldType( fieldType, compare, value );
+		const isValidComparison = validateComparisonForFieldType( fieldType, compare );
 		if ( ! isValidComparison ) {
+			// eslint-disable-next-line no-console
 			console.warn( `Invalid comparison "${ compare }" for field type "${ fieldType }"` );
 			return false;
 		}

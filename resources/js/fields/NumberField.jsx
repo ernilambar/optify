@@ -1,9 +1,8 @@
 import React from 'react';
 import { TextControl, Button, ButtonGroup } from '@wordpress/components';
 import FieldWrapper from '../components/FieldWrapper';
-import { extractHtmlAttributes } from '../utils/utils';
+import { extractHtmlAttributes, processChoices } from '../utils/utils';
 import { isNumberValueEqual } from '../utils/logic';
-import { processChoices } from '../utils/utils';
 
 const NumberField = ( { field, value, onChange } ) => {
 	const { name, label, choices = [], description } = field;

@@ -1,7 +1,6 @@
 import React from 'react';
 import FieldWrapper from '../components/FieldWrapper';
-import { extractHtmlAttributes } from '../utils/utils';
-import { processChoices } from '../utils/utils';
+import { extractHtmlAttributes, processChoices } from '../utils/utils';
 
 const MultiCheckField = ( { field, value, onChange } ) => {
 	const { name, label, description, choices = [] } = field;
@@ -31,8 +30,13 @@ const MultiCheckField = ( { field, value, onChange } ) => {
 		>
 			<div className={ groupClass }>
 				{ ( processedChoices || [] ).map( ( choice ) => (
-					<label key={ choice.value } className="optify-field-multi-check-option">
+					<label
+						key={ choice.value }
+						htmlFor={ `${ name }-${ choice.value }` }
+						className="optify-field-multi-check-option"
+					>
 						<input
+							id={ `${ name }-${ choice.value }` }
 							type="checkbox"
 							value={ choice.value }
 							checked={ filteredValue.includes( choice.value ) }

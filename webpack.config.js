@@ -1,10 +1,5 @@
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
-// Prevent cleaning output directory.
-const plugins = defaultConfig.plugins.filter(
-	( plugin ) => plugin.constructor.name !== 'CleanWebpackPlugin'
-);
-
 module.exports = {
 	...defaultConfig,
 	entry: {
@@ -23,8 +18,6 @@ module.exports = {
 		// Disable chunk splitting - bundle everything into one file.
 		splitChunks: false,
 	},
-	// Use filtered plugins
-	plugins: [ ...plugins ],
 	// Enable persistent caching .
 	cache: {
 		type: 'filesystem',

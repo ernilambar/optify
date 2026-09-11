@@ -3,7 +3,7 @@
  * This function converts HTML entities like &amp;, &lt;, &gt;, &quot;, &#39;, &mdash; back to their original characters.
  *
  * @param {string} str - The string containing HTML entities to decode.
- * @returns {string} The decoded string.
+ * @return {string} The decoded string.
  */
 const decodeHtmlEntities = ( str ) => {
 	if ( typeof str !== 'string' ) {
@@ -21,7 +21,7 @@ const decodeHtmlEntities = ( str ) => {
  * This is useful for field components that need to display HTML entities properly.
  *
  * @param {Array} choices - Array of choice objects with label and value properties.
- * @returns {Array} Processed choices array with decoded labels.
+ * @return {Array} Processed choices array with decoded labels.
  */
 const processChoices = ( choices = [] ) => {
 	return choices.map( ( choice ) => ( {
@@ -34,7 +34,7 @@ const processChoices = ( choices = [] ) => {
  * Helper to extract valid HTML attributes from field.attributes.
  *
  * @param {Object} fieldConfig - The field configuration object.
- * @returns {Object} Object containing valid HTML attributes.
+ * @return {Object} Object containing valid HTML attributes.
  */
 const extractHtmlAttributes = ( fieldConfig ) => {
 	const htmlAttributes = {};

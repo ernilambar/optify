@@ -19,12 +19,8 @@ const OptifyOptionsPanelWrapper = ( { config, restUrl, nonce, panelId, display =
 			nonce={ nonce }
 			panelId={ panelId }
 			display={ display }
-			onSave={ ( values ) => {
-				// Handle save success
-			} }
-			onError={ ( error ) => {
-				// Handle save error
-			} }
+			onSave={ () => {} }
+			onError={ () => {} }
 		/>
 	);
 };
@@ -104,6 +100,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 						/>
 					);
 				} catch ( error ) {
+					// eslint-disable-next-line no-console
 					console.error( 'Error rendering panel:', error );
 				}
 			}

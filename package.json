@@ -1,18 +1,8 @@
 {
 	"name": "optify",
 	"version": "1.0.1",
-	"description": "A flexible WordPress panel system for React-based options",
 	"private": true,
-	"license": "MIT",
-	"author": "Nilambar Sharma <nilambar@outlook.com> (https://www.nilambar.net/)",
-	"homepage": "https://github.com/ernilambar/optify#readme",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/ernilambar/optify.git"
-	},
-	"bugs": {
-		"url": "https://github.com/ernilambar/optify/issues"
-	},
+	"description": "A flexible WordPress panel system for React-based options",
 	"keywords": [
 		"wordpress",
 		"wordpress-plugin",
@@ -21,14 +11,21 @@
 		"react",
 		"rest-api"
 	],
-	"engines": {
-		"node": ">=18"
+	"homepage": "https://github.com/ernilambar/optify#readme",
+	"bugs": {
+		"url": "https://github.com/ernilambar/optify/issues"
 	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ernilambar/optify.git"
+	},
+	"license": "MIT",
+	"author": "Nilambar Sharma <nilambar@outlook.com> (https://www.nilambar.net/)",
 	"scripts": {
 		"build": "wp-scripts build",
 		"dev": "wp-scripts start",
 		"format": "wp-scripts format && pnpm run format:css",
-		"format:css": "prettier --write \"**/*.{css,scss}\"",
+		"format:css": "prettier \"**/*.{css,scss}\" --write --log-level warn",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"lint:md:docs": "wp-scripts lint-md-docs",
@@ -42,16 +39,21 @@
 	"browserslist": "> 2%, last 2 versions, not dead",
 	"dependencies": {
 		"@hello-pangea/dnd": "^18.0.1",
+		"@wordpress/components": "^40.1.0",
+		"@wordpress/i18n": "^6.28.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
 		"@wordpress/prettier-config": "^4.27.0",
-		"@wordpress/scripts": "^27.0.0",
+		"@wordpress/scripts": "^35.0.0",
 		"postcss": "^8.5.6",
 		"postcss-import": "^16.1.1",
 		"postcss-nested": "^7.0.2",
 		"postcss-preset-env": "^10.2.4",
 		"prettier": "npm:wp-prettier@^3.0.3"
+	},
+	"engines": {
+		"node": ">=22.13.0"
 	}
 }
